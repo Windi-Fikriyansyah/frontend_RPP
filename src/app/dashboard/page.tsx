@@ -234,40 +234,67 @@ export default function DashboardPage() {
         }
     };
 
-    const handleExportWord = () => {
+    const handleExportWord = async () => {
         if (!result) return;
-        // Simple HTML Blob for Word
-        // Note: For real .docx generation, better libraries exist, but HTML is standard for web-to-word.
-        const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>`;
-        const footer = "</body></html>";
-        // Convert Markdown to basic HTML (using regex/simple approach or using a lib is better, but since we render using ReactMarkdown, we don't have the raw HTML string easily unless we use a marked lib.
-        // Quick workaround: Just save the Markdown Text as .txt if strictly text, OR wrap the text in <pre> for Word.
-        // Better: Let's assume user wants the text.
-        // Actually, user wants "Export Word". Markdown text in Word is ugly. 
-        // Let's use a cleaner approach: Download as .md (Markdown) or .doc with pre-formatted text.
-        // Given constraints, I'll create a simple .doc with the Content.
+        try {
+            const response = await api.post("/api/rpp/export-word", {
+                content_markdown: result,
+                mapel: formData.mapel,
+                topik: formData.topik,
+                kelas: formData.kelas || "Semua"
+            }, { responseType: 'blob' });
 
-        // BETTER: We can use the 'result' string and put it in a blob.
-        const blob = new Blob(['\ufeff', result], {
-            type: 'application/msword'
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `RPP-${formData.mapel}-${formData.topik}.doc`; // Word will open text fine, or treating as html.
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.success("Mendownload File Word...");
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `RPP_${formData.topik}.docx`.replace(/\s+/g, '_'));
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success("File Word berhasil diunduh");
+        } catch (e) {
+            toast.error("Gagal mendownload file Word");
+        }
     };
 
     // PDF is handled by window.print for now (cleanest native solution without massive libs)
-    const handlePrintPDF = () => {
-        window.print();
+    const handleExportPDF = async () => {
+        if (!result) return;
+        try {
+            const response = await api.post("/api/rpp/export-pdf", {
+                content_markdown: result,
+                mapel: formData.mapel,
+                topik: formData.topik,
+                kelas: formData.kelas || "Semua"
+            }, { responseType: 'blob' });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `RPP_${formData.topik}.pdf`.replace(/\s+/g, '_'));
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success("File PDF berhasil diunduh");
+        } catch (e) {
+            toast.error("Gagal mendownload file PDF");
+        }
     };
 
     const handleGeneratePPT = async () => {
         if (!result) return;
+
+        if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
+            toast.error("Fitur Premium", {
+                description: "Upgrade ke paket Pro untuk membuat slide presentasi otomatis!",
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/harga")
+                }
+            });
+            return;
+        }
+
         setGeneratingPPT(true);
         try {
             const response = await api.post("/api/rpp/generate-ppt", {
@@ -670,7 +697,7 @@ export default function DashboardPage() {
                                             {generating ? "AI sedang menyusun modul ajar Anda..." : result ? "Hasil sukses digenerate dari AI." : "Silakan isi form disamping dan klik Generate."}
                                         </CardDescription>
                                     </div>
-                                    {!generating && result && (user?.subscription_plan === "pro" || user?.subscription_plan === "school") && (
+                                    {!generating && result && (
                                         <div className="flex gap-2">
                                             <Button
                                                 size="sm"
@@ -687,7 +714,19 @@ export default function DashboardPage() {
                                             <Button
                                                 size="sm"
                                                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold"
-                                                onClick={() => setShowQuizModal(true)}
+                                                onClick={() => {
+                                                    if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
+                                                        toast.error("Fitur Premium", {
+                                                            description: "Upgrade ke paket Pro untuk membuat soal otomatis!",
+                                                            action: {
+                                                                label: "Upgrade",
+                                                                onClick: () => router.push("/harga")
+                                                            }
+                                                        });
+                                                        return;
+                                                    }
+                                                    setShowQuizModal(true);
+                                                }}
                                             >
                                                 <FileQuestion className="w-4 h-4 mr-2" />
                                                 Buat Soal
@@ -737,17 +776,17 @@ export default function DashboardPage() {
                                         <Save className="w-4 h-4 mr-2" />
                                         Simpan
                                     </Button>
-                                    <Button variant="outline" onClick={handleCopy}>
+                                    {/* <Button variant="outline" onClick={handleCopy}>
                                         <Copy className="w-4 h-4 mr-2" />
                                         Copy Teks
-                                    </Button>
+                                    </Button> */}
                                     <Button variant="outline" onClick={handleExportWord}>
                                         <FileText className="w-4 h-4 mr-2" />
                                         Export Word
                                     </Button>
-                                    <Button onClick={handlePrintPDF}>
-                                        <Printer className="w-4 h-4 mr-2" />
-                                        Simpan PDF
+                                    <Button onClick={handleExportPDF}>
+                                        <Download className="w-4 h-4 mr-2" />
+                                        Unduh PDF
                                     </Button>
                                 </div>
                             )}

@@ -18,7 +18,7 @@ const plans = [
         features: [
             "3 RPP per bulan",
             "Export PDF",
-            "Copy Text"
+            // "Copy Text"
         ],
         cta: "Mulai Gratis",
         popular: false
