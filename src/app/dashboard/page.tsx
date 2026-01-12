@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Check, ChevronsUpDown, Copy, Loader2, Printer, Save, FileText, Download, Presentation, FileQuestion, Eye, EyeOff } from "lucide-react"; // Icons for Save/Export
+import LoadingScreen from "@/components/LoadingScreen";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { toast } from "sonner"; // Toast
@@ -365,7 +366,7 @@ export default function DashboardPage() {
         }
     };
 
-    if (loadingAuth) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    if (loadingAuth) return <LoadingScreen message="Menyiapkan dashboard..." />;
 
     return (
         <div className="min-h-screen bg-gray-50 pb-10 print:bg-white print:pb-0">

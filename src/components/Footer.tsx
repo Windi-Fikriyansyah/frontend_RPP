@@ -9,12 +9,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="md:col-span-1">
                         <Link href="/" className="flex items-center gap-2 mb-4">
-                            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                                <BookOpen className="w-5 h-5 text-primary-foreground" />
-                            </div>
-                            <span className="text-xl font-bold text-background">
-                                RPP<span className="text-primary">Genius</span>
-                            </span>
+                            <img src="/logo.png" alt="RPPGenius Logo" className="h-28 w-auto" />
                         </Link>
                         <p className="text-background/70 text-sm leading-relaxed mb-6">
                             Platform pembuatan RPP berbasis AI untuk guru Indonesia. Sesuai dengan Kurikulum Merdeka.
