@@ -37,8 +37,9 @@ export default function LoginPage() {
     };
 
     const handleGoogleLogin = () => {
-        // Redirect browser directly to backend auth enpoint
-        window.location.href = "http://localhost:8000/auth/google/login";
+        // Redirect browser directly to backend auth endpoint
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        window.location.href = `${backendUrl}/auth/google/login`;
     };
 
     return (
