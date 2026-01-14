@@ -249,9 +249,9 @@ const PricingSection = () => {
                     <div className="bg-background border border-border rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
                         {/* Modal Header */}
                         <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-background z-10">
-                            <div>
-                                <h2 className="text-2xl font-bold text-foreground">Detail Pembayaran</h2>
-                                <p className="text-muted-foreground text-sm whitespace-nowrap">
+                            <div className="flex-1 min-w-0 pr-4">
+                                <h2 className="text-xl md:text-2xl font-bold text-foreground truncate">Detail Pembayaran</h2>
+                                <p className="text-muted-foreground text-sm truncate">
                                     Paket: <span className="font-semibold text-foreground">{selectedPlan?.name}</span> ({selectedPlan?.price})
                                 </p>
                             </div>
@@ -299,7 +299,7 @@ const PricingSection = () => {
                                                         key={channel.code}
                                                         onClick={() => handleSubscribe(channel.code)}
                                                         disabled={loading !== null}
-                                                        className="flex items-center p-4 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent transition-all text-left relative overflow-hidden group"
+                                                        className="flex items-center p-3 sm:p-4 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent transition-all text-left relative overflow-hidden group"
                                                     >
                                                         <div className="w-12 h-12 bg-white rounded-xl p-2 flex items-center justify-center mr-4 border border-border group-hover:scale-105 transition-transform shrink-0">
                                                             <img src={channel.icon_url} alt={channel.name} className="max-w-full max-h-full object-contain" />

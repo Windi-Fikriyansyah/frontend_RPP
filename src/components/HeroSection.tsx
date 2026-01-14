@@ -25,7 +25,7 @@ const HeroSection = () => {
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight mb-6 animate-fade-in-up">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight mb-6 animate-fade-in-up">
                         Bebas Begadang, <br />
                         <span className="text-gradient-primary">Administrasi Guru</span> <br />
                         Selesai dalam 2 Menit!

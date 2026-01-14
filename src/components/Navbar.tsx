@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="RPPGenius Logo" className="h-28 w-auto" />
+            <img src="/logo.png" alt="RPPGenius Logo" className="h-16 md:h-28 w-auto transition-all" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -84,34 +84,34 @@ const Navbar = () => {
             <div className="flex flex-col gap-4">
               {user && (
                 <>
-                  <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+                  <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Dashboard
                   </Link>
-                  <Link href="/dashboard/rpp-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+                  <Link href="/dashboard/rpp-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Riwayat RPP
                   </Link>
-                  <Link href="/dashboard/quiz-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+                  <Link href="/dashboard/quiz-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Riwayat Soal
                   </Link>
                 </>
               )}
-              <Link href="/fitur" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+              <Link href="/fitur" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                 Fitur
               </Link>
-              <Link href="/cara-kerja" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+              <Link href="/cara-kerja" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                 Cara Kerja
               </Link>
-              <Link href="/harga" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+              <Link href="/harga" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                 Harga
               </Link>
-              <a href="#testimoni" className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2">
+              <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                 Testimoni
               </a>
-              <div className="flex flex-col gap-2 pt-4">
-                <Link href="/login">
+              <div className="flex flex-col gap-2 pt-4 px-4">
+                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="ghost" className="w-full">Masuk</Button>
                 </Link>
-                <Link href="/register">
+                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="hero" className="w-full">Mulai Gratis</Button>
                 </Link>
               </div>
