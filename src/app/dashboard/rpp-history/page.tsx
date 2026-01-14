@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
     Table,
@@ -60,6 +61,8 @@ import Link from "next/link";
 import LoadingScreen from "@/components/LoadingScreen";
 
 export default function RPPHistoryPage() {
+    const router = useRouter();
+    const [user, setUser] = useState<any>(null);
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedRPP, setSelectedRPP] = useState<any>(null);
@@ -69,8 +72,18 @@ export default function RPPHistoryPage() {
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
     useEffect(() => {
+        fetchUser();
         fetchHistory();
     }, []);
+
+    const fetchUser = async () => {
+        try {
+            const res = await api.get("/auth/me");
+            setUser(res.data);
+        } catch (e) {
+            console.error("Failed to load user");
+        }
+    };
 
     const fetchHistory = async () => {
         try {
@@ -97,6 +110,17 @@ export default function RPPHistoryPage() {
     };
 
     const handleExportWord = async (item: any) => {
+        if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
+            toast.error("Fitur Premium", {
+                description: "Upgrade paket Anda untuk mengunduh dokumen Word.",
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/harga")
+                }
+            });
+            return;
+        }
+
         try {
             const response = await api.post("/api/rpp/export-word", {
                 content_markdown: item.content_markdown,
@@ -119,6 +143,17 @@ export default function RPPHistoryPage() {
     };
 
     const handleExportPDF = async (item: any) => {
+        if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
+            toast.error("Fitur Premium", {
+                description: "Upgrade paket Anda untuk mengunduh dokumen PDF.",
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/harga")
+                }
+            });
+            return;
+        }
+
         try {
             const response = await api.post("/api/rpp/export-pdf", {
                 content_markdown: item.content_markdown,

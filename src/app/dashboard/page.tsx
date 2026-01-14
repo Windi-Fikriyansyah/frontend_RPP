@@ -40,6 +40,11 @@ export default function DashboardPage() {
     const [generatingPPT, setGeneratingPPT] = useState(false);
     const [generatingQuiz, setGeneratingQuiz] = useState(false);
     const [result, setResult] = useState<string | null>(null);
+
+    // PPT State
+    const [showPPTModal, setShowPPTModal] = useState(false);
+    const [pptTemplate, setPptTemplate] = useState("Ceria");
+
     const [quizResult, setQuizResult] = useState<any | null>(null);
     const [showQuizModal, setShowQuizModal] = useState(false);
     const [showAnswers, setShowAnswers] = useState(false);
@@ -281,7 +286,7 @@ export default function DashboardPage() {
         }
     };
 
-    const handleGeneratePPT = async () => {
+    const handleGeneratePPT = () => {
         if (!result) return;
 
         if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
@@ -294,13 +299,20 @@ export default function DashboardPage() {
             });
             return;
         }
+        setShowPPTModal(true);
+    };
 
+    const executeGeneratePPT = async () => {
+        if (!result) return;
+
+        setShowPPTModal(false);
         setGeneratingPPT(true);
         try {
             const response = await api.post("/api/rpp/generate-ppt", {
                 rpp_content: result,
                 mapel: formData.mapel,
-                topik: formData.topik
+                topik: formData.topik,
+                template: pptTemplate
             }, {
                 responseType: 'blob'
             });
@@ -796,6 +808,68 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </main>
+
+            {/* PPT TEMPLATE MODAL */}
+            <Dialog open={showPPTModal} onOpenChange={setShowPPTModal}>
+                <DialogContent className="sm:max-w-[700px]">
+                    <DialogHeader>
+                        <DialogTitle>Pilih Template Presentasi</DialogTitle>
+                        <DialogDescription>
+                            Pilih gaya desain slide yang paling cocok untuk materi ini.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
+                        {[
+                            { id: "Ceria", name: "Template 1", desc: "Gaya Ceria & Seru", color: "bg-yellow-100", img: "/templates/template1.png" },
+                            { id: "Formal", name: "Template 2", desc: "Gaya Formal & Rapi", color: "bg-blue-100", img: "/templates/template2.png" },
+                            { id: "Alam", name: "Template 3", desc: "Gaya Alam & Segar", color: "bg-emerald-100", img: "/templates/template3.png" },
+                        ].map((template) => (
+                            <div
+                                key={template.id}
+                                onClick={() => setPptTemplate(template.id)}
+                                className={cn(
+                                    "cursor-pointer group rounded-xl border-2 transition-all relative overflow-hidden flex flex-col",
+                                    pptTemplate === template.id ? "border-blue-600 shadow-lg ring-2 ring-blue-600 ring-offset-2" : "border-gray-200 hover:border-blue-300 hover:shadow-md"
+                                )}
+                            >
+                                {/* Thumbnail Image Area */}
+                                <div className={cn("aspect-[16/9] w-full relative flex items-center justify-center overflow-hidden", template.color)}>
+                                    <img
+                                        src={template.img}
+                                        alt={template.name}
+                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                    />
+                                </div>
+
+                                {/* Content Area */}
+                                <div className="p-3 bg-white flex-1">
+                                    <h4 className="font-bold text-sm text-gray-900">{template.name}</h4>
+                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{template.desc}</p>
+                                </div>
+
+                                {/* Selection Checkmark */}
+                                {pptTemplate === template.id && (
+                                    <div className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-1 shadow-sm">
+                                        <Check className="w-3 h-3" />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowPPTModal(false)}>Batal</Button>
+                        <Button
+                            onClick={executeGeneratePPT}
+                            className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold shadow-lg"
+                        >
+                            <Presentation className="w-4 h-4 mr-2" />
+                            Buat Presentasi
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* QUIZ CONFIG MODAL */}
             <Dialog open={showQuizModal} onOpenChange={setShowQuizModal}>

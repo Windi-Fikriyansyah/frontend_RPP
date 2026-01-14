@@ -4,44 +4,45 @@ import {
     Download,
     Palette,
     BookOpen,
-    Users
+    Users,
+    Clock
 } from "lucide-react";
 
 const features = [
     {
         icon: Wand2,
-        title: "AI-Powered Generator",
-        description: "Teknologi AI canggih yang memahami kebutuhan Kurikulum Merdeka dan menghasilkan RPP yang relevan.",
-        color: "primary"
-    },
-    {
-        icon: FileText,
-        title: "Template Lengkap",
-        description: "Berbagai template RPP untuk semua jenjang pendidikan dari SD, SMP, hingga SMA/SMK.",
-        color: "secondary"
-    },
-    {
-        icon: Download,
-        title: "Export Multi-Format",
-        description: "Download RPP dalam format Word, PDF, atau langsung cetak. Sesuai standar dinas pendidikan.",
+        title: "RPP Instan Kurikulum Merdeka",
+        description: "Hasilkan Modul Ajar lengkap (Tujuan, Langkah, Asesmen) hanya dengan memasukkan topik materi.",
         color: "primary"
     },
     {
         icon: Palette,
-        title: "Kustomisasi Mudah",
-        description: "Edit dan sesuaikan setiap bagian RPP sesuai kebutuhan kelas dan karakteristik siswa Anda.",
+        title: "Otomatis Jadi PPT Estetik",
+        description: "Ubah materi RPP Anda menjadi slide presentasi yang siap pakai di kelas tanpa perlu desain manual.",
         color: "secondary"
     },
     {
         icon: BookOpen,
-        title: "Sesuai Kurikulum Merdeka",
-        description: "Mengikuti struktur terbaru Kurikulum Merdeka dengan Capaian Pembelajaran dan Profil Pelajar Pancasila.",
+        title: "Generator Soal",
+        description: "Buat soal pilihan ganda yang sesuai dengan materi RPP, lengkap dengan kunci jawaban.",
         color: "primary"
     },
     {
-        icon: Users,
-        title: "Kolaborasi Tim",
-        description: "Bagikan dan kolaborasi dengan sesama guru untuk membuat RPP bersama-sama.",
+        icon: Download,
+        title: "Export Word & PDF Rapi",
+        description: "Download file yang sudah rapi, siap print, dan sesuai standar dinas atau pengawas sekolah.",
+        color: "secondary"
+    },
+    {
+        icon: Clock, // Import Clock dari Lucide
+        title: "Riwayat & Bank Data",
+        description: "Semua RPP dan soal tersimpan aman. Bisa diedit kembali atau digunakan untuk tahun ajaran depan.",
+        color: "primary"
+    },
+    {
+        icon: FileText,
+        title: "Sesuai Format PMM",
+        description: "Format dokumen telah disesuaikan untuk diupload ke Platform Merdeka Mengajar (PMM).",
         color: "secondary"
     }
 ];

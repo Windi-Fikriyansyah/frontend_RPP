@@ -11,7 +11,7 @@ const steps = [
         number: "01",
         icon: ClipboardList,
         title: "Isi Informasi Dasar",
-        description: "Masukkan mata pelajaran, kelas, topik pembelajaran, dan tujuan yang ingin dicapai."
+        description: "Masukkan mata pelajaran, kelas, dan topik pembelajaran."
     },
     {
         number: "02",
@@ -19,14 +19,14 @@ const steps = [
         title: "AI Generate RPP",
         description: "Sistem AI kami akan menganalisis dan menghasilkan RPP lengkap sesuai Kurikulum Merdeka."
     },
+    // {
+    //     number: "03",
+    //     icon: Edit3,
+    //     title: "Edit & Sesuaikan",
+    //     description: "Review dan edit bagian yang perlu disesuaikan dengan kebutuhan kelas Anda."
+    // },
     {
         number: "03",
-        icon: Edit3,
-        title: "Edit & Sesuaikan",
-        description: "Review dan edit bagian yang perlu disesuaikan dengan kebutuhan kelas Anda."
-    },
-    {
-        number: "04",
         icon: Download,
         title: "Download & Gunakan",
         description: "Export RPP dalam format pilihan Anda dan langsung gunakan untuk mengajar."
@@ -43,7 +43,7 @@ const HowItWorksSection = () => {
                         Cara Kerja
                     </span>
                     <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                        4 Langkah Mudah{" "}
+                        3 Langkah Mudah{" "}
                         <span className="text-gradient-secondary">Membuat RPP</span>
                     </h2>
                     <p className="text-muted-foreground text-lg">
@@ -53,7 +53,7 @@ const HowItWorksSection = () => {
 
                 {/* Steps */}
                 <div className="max-w-5xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {steps.map((step, index) => (
                             <div key={index} className="relative">
                                 {/* Connector Line */}

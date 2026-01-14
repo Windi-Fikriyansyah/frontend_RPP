@@ -25,16 +25,14 @@ const HeroSection = () => {
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                        Buat RPP{" "}
-                        <span className="text-gradient-primary">Kurikulum Merdeka</span>
-                        <br />
-                        dalam Hitungan Menit
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight mb-6 animate-fade-in-up">
+                        Bebas Begadang, <br />
+                        <span className="text-gradient-primary">Administrasi Guru</span> <br />
+                        Selesai dalam 2 Menit!
                     </h1>
 
-                    {/* Subheadline */}
-                    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                        RPPGenius membantu guru Indonesia membuat Rencana Pelaksanaan Pembelajaran yang sesuai standar dengan bantuan AI. Hemat waktu, tingkatkan kualitas.
+                    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+                        Gak cuma RPP! Buat <b>Slide PPT Menarik</b> dan <b>Bank Soal Otomatis</b> yang sinkron dengan materi Anda. 100% Sesuai Kurikulum Merdeka & PMM.
                     </p>
 
                     {/* CTA Buttons */}
@@ -54,7 +52,7 @@ const HeroSection = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                         <div className="flex flex-col items-center p-6 rounded-2xl bg-card shadow-soft border border-border">
                             <Clock className="w-8 h-8 text-primary mb-3" />
-                            <span className="text-3xl font-bold text-foreground">5 Menit</span>
+                            <span className="text-3xl font-bold text-foreground">2 Menit</span>
                             <span className="text-sm text-muted-foreground">Waktu Pembuatan</span>
                         </div>
                         <div className="flex flex-col items-center p-6 rounded-2xl bg-card shadow-soft border border-border">

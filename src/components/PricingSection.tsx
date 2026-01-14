@@ -25,19 +25,20 @@ const plans = [
     },
     {
         id: "monthly",
-        name: "Pro",
-        price: "Rp 49.000",
-        priceNumeric: 49000,
+        name: "Pro (Guru Juara)",
+        price: "Rp 39.000",
+        priceNumeric: 39000,
         period: "per bulan",
-        description: "Untuk guru aktif yang butuh lebih banyak",
+        description: "Solusi lengkap administrasi guru anti pusing",
         features: [
-            "RPP unlimited",
-            "Export Word & PDF",
-            "Otomatis Buat PPT",
-            "Otomatis Buat Soal",
-            "Prioritas dukungan"
+            "RPP Tanpa Batas (Unlimited)",
+            "Generate PPT Estetik (Unlimited)",
+            "Buat Soal Otomatis",
+            "Download Format Word (Bisa Diedit)",
+            "Simpan Riwayat Selamanya",
+            "Bebas Watermark & Iklan"
         ],
-        cta: "Pilih Pro",
+        cta: "Langganan Sekarang",
         popular: true
     },
     // {
@@ -181,7 +182,7 @@ const PricingSection = () => {
                 </div>
 
                 {/* Pricing Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                     {plans.map((plan, index) => (
                         <div
                             key={index}
