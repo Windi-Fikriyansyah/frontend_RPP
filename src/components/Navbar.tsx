@@ -110,11 +110,11 @@ const Navbar = () => {
                   <Link href="/harga" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Harga
                   </Link>
+                  <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                    Testimoni
+                  </a>
                 </>
               )}
-              <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
-                Testimoni
-              </a>
               <div className="flex flex-col gap-2 pt-4 px-4">
                 {user ? (
                   <>
