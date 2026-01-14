@@ -35,15 +35,19 @@ const Navbar = () => {
                 </Link>
               </>
             )}
-            <Link href="/fitur" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              Fitur
-            </Link>
-            <Link href="/cara-kerja" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              Cara Kerja
-            </Link>
-            <Link href="/harga" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-              Harga
-            </Link>
+            {!user && (
+              <>
+                <Link href="/fitur" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                  Fitur
+                </Link>
+                <Link href="/cara-kerja" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                  Cara Kerja
+                </Link>
+                <Link href="/harga" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                  Harga
+                </Link>
+              </>
+            )}
           </div>
 
           {/* CTA Buttons */}
@@ -95,25 +99,42 @@ const Navbar = () => {
                   </Link>
                 </>
               )}
-              <Link href="/fitur" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
-                Fitur
-              </Link>
-              <Link href="/cara-kerja" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
-                Cara Kerja
-              </Link>
-              <Link href="/harga" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
-                Harga
-              </Link>
+              {!user && (
+                <>
+                  <Link href="/fitur" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                    Fitur
+                  </Link>
+                  <Link href="/cara-kerja" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                    Cara Kerja
+                  </Link>
+                  <Link href="/harga" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                    Harga
+                  </Link>
+                </>
+              )}
               <a href="#testimoni" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                 Testimoni
               </a>
               <div className="flex flex-col gap-2 pt-4 px-4">
-                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full">Masuk</Button>
-                </Link>
-                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="hero" className="w-full">Mulai Gratis</Button>
-                </Link>
+                {user ? (
+                  <>
+                    <div className="text-sm font-medium py-2 px-4 text-foreground border-b border-border/50 mb-2">
+                      Hi, {user.full_name || user.email.split('@')[0]}
+                    </div>
+                    <Button variant="ghost" className="w-full text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => { logout(); setIsMenuOpen(false); }}>
+                      Keluar
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full">Masuk</Button>
+                    </Link>
+                    <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="hero" className="w-full">Mulai Gratis</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
