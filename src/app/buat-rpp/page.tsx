@@ -18,6 +18,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { toast } from "sonner"; // Toast
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Markdown Render
 import ReactMarkdown from 'react-markdown';
@@ -43,7 +44,11 @@ export default function DashboardPage() {
 
     // PPT State
     const [showPPTModal, setShowPPTModal] = useState(false);
+
     const [pptTemplate, setPptTemplate] = useState("Ceria");
+
+    // UI State
+    const [activeTab, setActiveTab] = useState<"form" | "result">("form");
 
     const [quizResult, setQuizResult] = useState<any | null>(null);
     const [showQuizModal, setShowQuizModal] = useState(false);
@@ -191,6 +196,7 @@ export default function DashboardPage() {
         try {
             const res = await api.post("/api/rpp/generate", payload);
             setResult(res.data.data.rpp_markdown);
+            setActiveTab("result"); // Auto switch to result tab
         } catch (err: any) {
             if (err.response?.status === 403) {
                 toast.error("Kuota Habis", {
@@ -232,7 +238,7 @@ export default function DashboardPage() {
                 input_data: formData // Send all inputs
             });
             toast.success("Data RPP Berhasil Disimpan!", {
-                description: "Tersimpan aman di database server.",
+                description: "Data Berhasil Disimpan.",
             });
         } catch (e) {
             toast.error("Gagal menyimpan RPP.");
@@ -418,11 +424,22 @@ export default function DashboardPage() {
             <div className="h-20 print:hidden"></div>
 
             <main className="container mx-auto px-4 py-8 max-w-6xl print:p-0 print:max-w-none">
+
+                {/* Mobile Tabs Switcher */}
+                <div className="lg:hidden mb-6">
+                    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "form" | "result")}>
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="form">📝 Input Form</TabsTrigger>
+                            <TabsTrigger value="result" disabled={!result && !generating}>📄 Hasil RPP</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 print:block">
 
                     {/* INPUT FORM - Hide on Print */}
-                    <div className="space-y-6 print:hidden h-full">
-                        <Card className="h-full overflow-y-auto relative">
+                    <div className={cn("space-y-6 print:hidden h-full", activeTab === "form" ? "block" : "hidden lg:block")}>
+                        <Card className="h-auto lg:h-full overflow-y-auto relative">
                             <CardHeader>
                                 <div className="flex flex-col gap-2 items-start mb-2">
                                     {user?.subscription_plan && (
@@ -687,7 +704,7 @@ export default function DashboardPage() {
 
                                     <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 font-bold h-14 text-lg shadow-xl uppercase tracking-wide" disabled={generating}>
                                         {generating ? (
-                                            <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Meracik Modul Ajar Spesial...</>
+                                            <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Generate RPP Sekarang</>
                                         ) : (
                                             "🚀 Generate RPP Sekarang"
                                         )}
@@ -698,11 +715,11 @@ export default function DashboardPage() {
                     </div>
 
                     {/* RESULT VIEW */}
-                    <div className="space-y-6">
+                    <div className={cn("space-y-6", activeTab === "result" ? "block" : "hidden lg:block")}>
                         {/* Print Control Wrapper */}
                         <Card className="h-full flex flex-col min-h-[600px] print:border-none print:shadow-none print:h-auto">
                             <CardHeader className="bg-gray-50 border-b print:hidden">
-                                <div className="flex justify-between items-center">
+                                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                                     <div>
                                         <CardTitle>Hasil Generator RPP</CardTitle>
                                         <CardDescription>
@@ -710,7 +727,7 @@ export default function DashboardPage() {
                                         </CardDescription>
                                     </div>
                                     {!generating && result && (
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2 w-full md:w-auto">
                                             <Button
                                                 size="sm"
                                                 disabled={generatingPPT}
@@ -768,7 +785,7 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                 ) : result ? (
-                                    <div id="rpp-preview-content" className="p-10 h-[800px] overflow-auto bg-white border shadow-sm print:h-auto print:overflow-visible print:p-0 print:border-none print:shadow-none mx-auto w-full max-w-[800px]">
+                                    <div id="rpp-preview-content" className="p-10 h-auto min-h-[500px] lg:h-[800px] overflow-auto bg-white border shadow-sm print:h-auto print:overflow-visible print:p-0 print:border-none print:shadow-none mx-auto w-full max-w-[800px]">
                                         {/* DOCUMENT PAPER EFFECT */}
                                         <div className="prose prose-sm md:prose-base max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-800 prose-strong:text-slate-950 prose-ul:list-disc prose-ol:list-decimal prose-table:border-collapse prose-table:border prose-table:border-slate-300 prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:p-3 prose-td:border prose-td:border-slate-300 prose-td:p-3 prose-pre:bg-slate-50 prose-pre:text-slate-900 prose-pre:border prose-pre:border-slate-200 prose-pre:p-4 prose-hr:border-slate-300">
                                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{result}</ReactMarkdown>

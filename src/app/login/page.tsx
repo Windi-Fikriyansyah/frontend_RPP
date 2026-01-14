@@ -28,7 +28,7 @@ export default function LoginPage() {
         try {
             await api.post("/auth/login", { email, password });
             await login(); // Update context state
-            router.push("/dashboard");
+            router.push("/buat-rpp");
         } catch (err: any) {
             setError(err.response?.data?.detail || "Login failed. Check your credentials.");
         } finally {

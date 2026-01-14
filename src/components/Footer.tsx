@@ -31,20 +31,19 @@ const Footer = () => {
                     <div>
                         <h4 className="font-semibold text-background mb-4">Produk</h4>
                         <ul className="space-y-3">
-                            <li><a href="#fitur" className="text-background/70 hover:text-background transition-colors text-sm">Fitur</a></li>
-                            <li><a href="#harga" className="text-background/70 hover:text-background transition-colors text-sm">Harga</a></li>
-                            <li><a href="#" className="text-background/70 hover:text-background transition-colors text-sm">Template</a></li>
-                            <li><a href="#" className="text-background/70 hover:text-background transition-colors text-sm">Integrasi</a></li>
+                            <li><Link href="/fitur" className="text-background/70 hover:text-background transition-colors text-sm">Fitur</Link></li>
+                            <li><Link href="/harga" className="text-background/70 hover:text-background transition-colors text-sm">Harga</Link></li>
+                            <li><Link href="/cara-kerja" className="text-background/70 hover:text-background transition-colors text-sm">Cara Kerja</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="font-semibold text-background mb-4">Dukungan</h4>
                         <ul className="space-y-3">
-                            <li><a href="#" className="text-background/70 hover:text-background transition-colors text-sm">Pusat Bantuan</a></li>
-                            <li><a href="#" className="text-background/70 hover:text-background transition-colors text-sm">Panduan</a></li>
-                            <li><a href="#" className="text-background/70 hover:text-background transition-colors text-sm">Video Tutorial</a></li>
-                            <li><a href="#" className="text-background/70 hover:text-background transition-colors text-sm">FAQ</a></li>
+
+                            <li><Link href="/panduan" className="text-background/70 hover:text-background transition-colors text-sm">Panduan</Link></li>
+                            <li><Link href="/video-tutorial" className="text-background/70 hover:text-background transition-colors text-sm">Video Tutorial</Link></li>
+                            <li><Link href="/faq" className="text-background/70 hover:text-background transition-colors text-sm">FAQ</Link></li>
                         </ul>
                     </div>
 
@@ -70,11 +69,10 @@ const Footer = () => {
                 {/* Bottom */}
                 <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-background/50 text-sm">
-                        © 2024 RPPGenius. Hak cipta dilindungi.
+                        © 2025 RPPGenius. Hak cipta dilindungi.
                     </p>
                     <div className="flex gap-6">
-                        <a href="#" className="text-background/50 hover:text-background transition-colors text-sm">Kebijakan Privasi</a>
-                        <a href="#" className="text-background/50 hover:text-background transition-colors text-sm">Syarat & Ketentuan</a>
+
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 import NextTopLoader from "nextjs-toploader";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <body className={inter.className}>
         <NextTopLoader
           color="#2299DD"
@@ -34,6 +35,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
           <Toaster richColors position="top-center" />
+          <WhatsAppButton />
         </AuthProvider>
       </body>
     </html>

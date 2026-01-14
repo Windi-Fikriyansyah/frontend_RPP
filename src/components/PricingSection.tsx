@@ -108,7 +108,7 @@ const PricingSection = () => {
 
     const handlePlanSelect = (planId: string) => {
         if (planId === "free") {
-            router.push("/dashboard");
+            router.push("/buat-rpp");
             return;
         }
         setSelectedPlanId(planId);

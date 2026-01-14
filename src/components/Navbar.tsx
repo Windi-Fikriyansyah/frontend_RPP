@@ -24,13 +24,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-6">
             {user && (
               <>
-                <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
-                  Dashboard
+                <Link href="/buat-rpp" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                  Buat RPP
                 </Link>
-                <Link href="/dashboard/rpp-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                <Link href="/buat-rpp/rpp-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
                   Riwayat RPP
                 </Link>
-                <Link href="/dashboard/quiz-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                <Link href="/buat-rpp/quiz-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
                   Riwayat Soal
                 </Link>
               </>
@@ -84,13 +84,13 @@ const Navbar = () => {
             <div className="flex flex-col gap-4">
               {user && (
                 <>
-                  <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
-                    Dashboard
+                  <Link href="/buat-rpp" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                    Buat RPP
                   </Link>
-                  <Link href="/dashboard/rpp-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                  <Link href="/buat-rpp/rpp-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Riwayat RPP
                   </Link>
-                  <Link href="/dashboard/quiz-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                  <Link href="/buat-rpp/quiz-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Riwayat Soal
                   </Link>
                 </>

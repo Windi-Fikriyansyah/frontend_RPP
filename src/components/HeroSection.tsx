@@ -73,10 +73,12 @@ const HeroSection = () => {
                     <div className="relative rounded-2xl overflow-hidden shadow-strong border border-border bg-card p-2">
                         <div className="rounded-xl overflow-hidden bg-muted aspect-video relative group">
                             <video
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover bg-muted"
                                 muted
                                 loop
                                 playsInline
+                                preload="none"
+                                poster="/hero-poster.jpg"
                                 autoPlay={isPlaying}
                             />
 
