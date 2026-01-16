@@ -30,8 +30,11 @@ const Navbar = () => {
                 <Link href="/buat-rpp/rpp-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
                   Riwayat RPP
                 </Link>
-                <Link href="/buat-rpp/quiz-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+                <Link href="/buat-rpp/quiz-history" className="text-muted-foreground hover:text-foreground transition-colors font-medium text-sm">
                   Riwayat Soal
+                </Link>
+                <Link href="/riwayat-transaksi" className="text-muted-foreground hover:text-foreground transition-colors font-medium text-sm">
+                  Riwayat Transaksi
                 </Link>
               </>
             )}
@@ -92,6 +95,9 @@ const Navbar = () => {
                   </Link>
                   <Link href="/buat-rpp/quiz-history" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
                     Riwayat Soal
+                  </Link>
+                  <Link href="/riwayat-transaksi" onClick={() => setIsMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors font-medium py-2 px-4 hover:bg-muted rounded-lg">
+                    Riwayat Transaksi
                   </Link>
                 </>
               )}

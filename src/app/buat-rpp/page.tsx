@@ -828,58 +828,60 @@ export default function DashboardPage() {
 
             {/* PPT TEMPLATE MODAL */}
             <Dialog open={showPPTModal} onOpenChange={setShowPPTModal}>
-                <DialogContent className="sm:max-w-[700px]">
-                    <DialogHeader>
-                        <DialogTitle>Pilih Template Presentasi</DialogTitle>
-                        <DialogDescription>
+                <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden gap-0 sm:rounded-2xl max-h-[95vh] flex flex-col bottom-0 sm:bottom-auto translate-y-0 sm:translate-y-[-50%] top-auto sm:top-[50%] rounded-t-3xl sm:rounded-t-2xl">
+                    <DialogHeader className="p-6 pb-2">
+                        <DialogTitle className="text-xl md:text-2xl">Pilih Template Presentasi</DialogTitle>
+                        <DialogDescription className="text-sm md:text-base">
                             Pilih gaya desain slide yang paling cocok untuk materi ini.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
-                        {[
-                            { id: "Ceria", name: "Template 1", desc: "Gaya Ceria & Seru", color: "bg-yellow-100", img: "/templates/template1.png" },
-                            { id: "Formal", name: "Template 2", desc: "Gaya Formal & Rapi", color: "bg-blue-100", img: "/templates/template2.png" },
-                            { id: "Alam", name: "Template 3", desc: "Gaya Alam & Segar", color: "bg-emerald-100", img: "/templates/template3.png" },
-                        ].map((template) => (
-                            <div
-                                key={template.id}
-                                onClick={() => setPptTemplate(template.id)}
-                                className={cn(
-                                    "cursor-pointer group rounded-xl border-2 transition-all relative overflow-hidden flex flex-col",
-                                    pptTemplate === template.id ? "border-blue-600 shadow-lg ring-2 ring-blue-600 ring-offset-2" : "border-gray-200 hover:border-blue-300 hover:shadow-md"
-                                )}
-                            >
-                                {/* Thumbnail Image Area */}
-                                <div className={cn("aspect-[16/9] w-full relative flex items-center justify-center overflow-hidden", template.color)}>
-                                    <img
-                                        src={template.img}
-                                        alt={template.name}
-                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                                    />
-                                </div>
-
-                                {/* Content Area */}
-                                <div className="p-3 bg-white flex-1">
-                                    <h4 className="font-bold text-sm text-gray-900">{template.name}</h4>
-                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{template.desc}</p>
-                                </div>
-
-                                {/* Selection Checkmark */}
-                                {pptTemplate === template.id && (
-                                    <div className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-1 shadow-sm">
-                                        <Check className="w-3 h-3" />
+                    <div className="flex-1 overflow-y-auto px-6 py-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-4">
+                            {[
+                                { id: "Ceria", name: "Template 1", desc: "Gaya Ceria & Seru", color: "bg-yellow-100", img: "/templates/template1.png" },
+                                { id: "Formal", name: "Template 2", desc: "Gaya Formal & Rapi", color: "bg-blue-100", img: "/templates/template2.png" },
+                                { id: "Alam", name: "Template 3", desc: "Gaya Alam & Segar", color: "bg-emerald-100", img: "/templates/template3.png" },
+                            ].map((template) => (
+                                <div
+                                    key={template.id}
+                                    onClick={() => setPptTemplate(template.id)}
+                                    className={cn(
+                                        "cursor-pointer group rounded-xl border-2 transition-all relative overflow-hidden flex flex-col",
+                                        pptTemplate === template.id ? "border-blue-600 shadow-lg ring-2 ring-blue-600 ring-offset-2" : "border-gray-200 hover:border-blue-300 hover:shadow-md"
+                                    )}
+                                >
+                                    {/* Thumbnail Image Area */}
+                                    <div className={cn("aspect-[16/9] w-full relative flex items-center justify-center overflow-hidden", template.color)}>
+                                        <img
+                                            src={template.img}
+                                            alt={template.name}
+                                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                        />
                                     </div>
-                                )}
-                            </div>
-                        ))}
+
+                                    {/* Content Area */}
+                                    <div className="p-3 bg-white flex-1">
+                                        <h4 className="font-bold text-sm text-gray-900">{template.name}</h4>
+                                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{template.desc}</p>
+                                    </div>
+
+                                    {/* Selection Checkmark */}
+                                    {pptTemplate === template.id && (
+                                        <div className="absolute top-2 right-2 bg-blue-600 text-white rounded-full p-1 shadow-sm">
+                                            <Check className="w-3 h-3" />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowPPTModal(false)}>Batal</Button>
+                    <DialogFooter className="p-6 bg-gray-50/50 border-t flex-row gap-3 sm:gap-2">
+                        <Button variant="outline" onClick={() => setShowPPTModal(false)} className="flex-1 sm:flex-none">Batal</Button>
                         <Button
                             onClick={executeGeneratePPT}
-                            className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold shadow-lg"
+                            className="flex-[2] sm:flex-none bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold shadow-lg"
                         >
                             <Presentation className="w-4 h-4 mr-2" />
                             Buat Presentasi
@@ -890,14 +892,14 @@ export default function DashboardPage() {
 
             {/* QUIZ CONFIG MODAL */}
             <Dialog open={showQuizModal} onOpenChange={setShowQuizModal}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Konfigurasi Pembuatan Soal</DialogTitle>
+                <DialogContent className="sm:max-w-md p-0 overflow-hidden gap-0 sm:rounded-2xl bottom-0 sm:bottom-auto translate-y-0 sm:translate-y-[-50%] top-auto sm:top-[50%] rounded-t-3xl sm:rounded-t-2xl">
+                    <DialogHeader className="p-6 pb-2 text-left">
+                        <DialogTitle className="text-xl">Konfigurasi Pembuatan Soal</DialogTitle>
                         <DialogDescription>
                             AI akan membuatkan soal pilihan ganda berdasarkan isi RPP yang sudah dibuat.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4 py-4">
+                    <div className="px-6 py-4 space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="jumlah_soal">Jumlah Soal</Label>
                             <Select
@@ -931,12 +933,12 @@ export default function DashboardPage() {
                             </Select>
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowQuizModal(false)}>Batal</Button>
+                    <DialogFooter className="p-6 bg-gray-50/50 border-t flex-row gap-3 sm:gap-2">
+                        <Button variant="outline" onClick={() => setShowQuizModal(false)} className="flex-1 sm:flex-none">Batal</Button>
                         <Button
                             onClick={handleGenerateQuiz}
                             disabled={generatingQuiz}
-                            className="bg-purple-600 hover:bg-purple-700"
+                            className="flex-[2] sm:flex-none bg-purple-600 hover:bg-purple-700 font-bold"
                         >
                             {generatingQuiz ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sedang Membuat...</> : "Mulai Buat Soal"}
                         </Button>
