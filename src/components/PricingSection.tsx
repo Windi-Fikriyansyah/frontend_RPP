@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Sparkles, Loader2, CreditCard, Wallet, Banknote, QrCode, X } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 const plans = [
     {
@@ -79,6 +80,7 @@ type TripayChannel = {
 };
 
 const PricingSection = () => {
+    const { user } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -107,6 +109,12 @@ const PricingSection = () => {
     };
 
     const handlePlanSelect = (planId: string) => {
+        if (!user && planId !== "free") {
+            toast.error("Silakan login terlebih dahulu untuk membeli paket.");
+            router.push("/login?redirect=/harga");
+            return;
+        }
+
         if (planId === "free") {
             router.push("/buat-rpp");
             return;
@@ -236,7 +244,7 @@ const PricingSection = () => {
                                 className="w-full"
                                 onClick={() => handlePlanSelect(plan.id)}
                             >
-                                {plan.cta}
+                                {user?.subscription_plan === plan.id ? "Perpanjang Paket" : plan.cta}
                             </Button>
                         </div>
                     ))}
@@ -245,15 +253,16 @@ const PricingSection = () => {
 
             {/* Payment Channel Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-background border border-border rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+                <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4">
+                    <div className="bg-background border-t sm:border border-border rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl max-w-2xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-in slide-in-from-bottom sm:zoom-in duration-300">
                         {/* Modal Header */}
-                        <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-background z-10">
+                        <div className="p-5 sm:p-6 border-b border-border flex items-center justify-between sticky top-0 bg-background z-10">
                             <div className="flex-1 min-w-0 pr-4">
-                                <h2 className="text-xl md:text-2xl font-bold text-foreground truncate">Detail Pembayaran</h2>
-                                <p className="text-muted-foreground text-sm truncate">
-                                    Paket: <span className="font-semibold text-foreground">{selectedPlan?.name}</span> ({selectedPlan?.price})
-                                </p>
+                                <h2 className="text-lg md:text-2xl font-bold text-foreground truncate">Pembelian {selectedPlan?.name}</h2>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <span className="text-primary font-bold">{selectedPlan?.price}</span>
+                                    <span className="text-muted-foreground text-xs">/ {selectedPlan?.period}</span>
+                                </div>
                             </div>
                             <button
                                 onClick={() => setShowModal(false)}
@@ -274,52 +283,70 @@ const PricingSection = () => {
                         </div>
 
                         {/* Modal Content */}
-                        <div className="overflow-y-auto p-6 space-y-8">
-                            {fetchingChannels ? (
-                                <div className="py-12 flex flex-col items-center justify-center">
-                                    <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-                                    <p className="text-muted-foreground">Memuat metode pembayaran...</p>
+                        <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
+                            {/* Price Breakdown Card */}
+                            <div className="p-4 rounded-2xl bg-muted/50 border border-border space-y-2.5">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-muted-foreground">Harga Paket</span>
+                                    <span className="font-semibold">{selectedPlan?.price}</span>
                                 </div>
-                            ) : (
-                                Object.entries(groupedChannels).map(([group, groupChannels]) => (
-                                    <div key={group} className="space-y-4">
-                                        <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                                            {group === 'Virtual Account' && <CreditCard className="w-4 h-4" />}
-                                            {group === 'E-Wallet' && <Wallet className="w-4 h-4" />}
-                                            {group === 'Convenience Store' && <Banknote className="w-4 h-4" />}
-                                            {group === 'QRIS' && <QrCode className="w-4 h-4" />}
-                                            {group}
-                                        </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {groupChannels.map((channel) => {
-                                                const fee = calculateFee(selectedPlan?.priceNumeric || 0, channel);
-                                                const total = (selectedPlan?.priceNumeric || 0) + fee;
-                                                return (
-                                                    <button
-                                                        key={channel.code}
-                                                        onClick={() => handleSubscribe(channel.code)}
-                                                        disabled={loading !== null}
-                                                        className="flex items-center p-3 sm:p-4 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent transition-all text-left relative overflow-hidden group"
-                                                    >
-                                                        <div className="w-12 h-12 bg-white rounded-xl p-2 flex items-center justify-center mr-4 border border-border group-hover:scale-105 transition-transform shrink-0">
-                                                            <img src={channel.icon_url} alt={channel.name} className="max-w-full max-h-full object-contain" />
-                                                        </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <p className="font-semibold text-foreground leading-tight mb-1 truncate">{channel.name}</p>
-                                                            <p className="text-xs font-bold text-primary whitespace-nowrap">Biaya Layanan: {formatRupiah(fee)}</p>
-                                                        </div>
-                                                        {loading === channel.code && (
-                                                            <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                                                                <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                                                            </div>
-                                                        )}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-muted-foreground">Biaya Layanan</span>
+                                    <span className="text-primary font-medium">Bervariasi per metode</span>
+                                </div>
+                                <div className="pt-2 border-t border-border/50 flex justify-between items-center font-bold">
+                                    <span className="text-foreground">Total Estimasi</span>
+                                    <span className="text-lg text-foreground">{selectedPlan?.price} + Fee</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                {fetchingChannels ? (
+                                    <div className="py-12 flex flex-col items-center justify-center">
+                                        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
+                                        <p className="text-muted-foreground">Memuat metode pembayaran...</p>
                                     </div>
-                                ))
-                            )}
+                                ) : (
+                                    Object.entries(groupedChannels).map(([group, groupChannels]) => (
+                                        <div key={group} className="space-y-4">
+                                            <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                                {group === 'Virtual Account' && <CreditCard className="w-4 h-4" />}
+                                                {group === 'E-Wallet' && <Wallet className="w-4 h-4" />}
+                                                {group === 'Convenience Store' && <Banknote className="w-4 h-4" />}
+                                                {group === 'QRIS' && <QrCode className="w-4 h-4" />}
+                                                {group}
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                {groupChannels.map((channel) => {
+                                                    const fee = calculateFee(selectedPlan?.priceNumeric || 0, channel);
+                                                    const total = (selectedPlan?.priceNumeric || 0) + fee;
+                                                    return (
+                                                        <button
+                                                            key={channel.code}
+                                                            onClick={() => handleSubscribe(channel.code)}
+                                                            disabled={loading !== null}
+                                                            className="flex items-center p-3.5 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent transition-all text-left relative overflow-hidden group"
+                                                        >
+                                                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl p-1.5 sm:p-2 flex items-center justify-center mr-3 sm:mr-4 border border-border group-hover:scale-105 transition-transform shrink-0">
+                                                                <img src={channel.icon_url} alt={channel.name} className="max-w-full max-h-full object-contain" />
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="font-bold text-foreground text-sm sm:text-base leading-tight mb-0.5 sm:mb-1 truncate">{channel.name}</p>
+                                                                <p className="text-[11px] sm:text-xs font-bold text-primary whitespace-nowrap">Fee: {formatRupiah(fee)}</p>
+                                                            </div>
+                                                            {loading === channel.code && (
+                                                                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                                                                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                                                                </div>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
 
                         {/* Modal Footer */}

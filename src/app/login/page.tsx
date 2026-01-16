@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { useAuth } from "@/context/AuthContext";
 
-export default function LoginPage() {
+function LoginContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get("redirect") || "/buat-rpp";
     const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -28,7 +30,7 @@ export default function LoginPage() {
         try {
             await api.post("/auth/login", { email, password });
             await login(); // Update context state
-            router.push("/buat-rpp");
+            router.push(redirectTo);
         } catch (err: any) {
             setError(err.response?.data?.detail || "Login failed. Check your credentials.");
         } finally {
@@ -108,5 +110,13 @@ export default function LoginPage() {
                 </CardFooter>
             </Card>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+            <LoginContent />
+        </Suspense>
     );
 }
