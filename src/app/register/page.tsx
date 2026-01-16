@@ -30,6 +30,11 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
+            if (formData.password.length < 8) {
+                setError("Password minimal 8 karakter.");
+                setLoading(false);
+                return;
+            }
             await api.post("/auth/register", formData);
             // Auto login after register or redirect to login
             router.push("/login?registered=true");
@@ -86,7 +91,9 @@ export default function RegisterPage() {
                                 required
                                 value={formData.password}
                                 onChange={handleChange}
+                                placeholder="Min. 8 karakter"
                             />
+                            <p className="text-[10px] text-muted-foreground italic">Minimal 8 karakter untuk keamanan akun.</p>
                         </div>
                         <Button type="submit" className="w-full" disabled={loading}>
                             {loading ? "Mendaftar..." : "Daftar Sekarang"}

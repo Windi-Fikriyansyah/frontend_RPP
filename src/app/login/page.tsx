@@ -54,6 +54,14 @@ function LoginContent() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    {searchParams.get("registered") === "true" && (
+                        <Alert className="bg-emerald-50 border-emerald-200 text-emerald-800">
+                            <AlertDescription className="font-medium text-center">
+                                Akun berhasil dibuat! Silakan login untuk memulai.
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
                     {error && (
                         <Alert variant="destructive">
                             <AlertDescription>{error}</AlertDescription>
