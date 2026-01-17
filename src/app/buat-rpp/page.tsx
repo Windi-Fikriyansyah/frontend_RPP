@@ -63,7 +63,7 @@ export default function DashboardPage() {
         nama_sekolah: "",
         jenjang: "SD",
         kelas: "4",
-        mapel: "Matematika",
+        mapel: "",
         fase: "B",
         elemen: "", // Default empty
         alokasi_waktu: "2 x 35 menit",
