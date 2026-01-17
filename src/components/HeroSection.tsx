@@ -32,7 +32,7 @@ const HeroSection = () => {
                     </h1>
 
                     <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-                        Gak cuma RPP! Buat <b>Slide PPT Menarik</b> dan <b>Bank Soal Otomatis</b> yang sinkron dengan materi Anda. 100% Sesuai Kurikulum Merdeka & PMM.
+                        Gak cuma RPP! Buat <b>Soal Otomatis</b> yang sinkron dengan materi Anda. 100% Sesuai Kurikulum Merdeka & PMM.
                     </p>
 
                     {/* CTA Buttons */}

@@ -33,9 +33,9 @@ const plans = [
         description: "Solusi lengkap administrasi guru anti pusing",
         features: [
             "RPP Tanpa Batas (Unlimited)",
-            "Generate PPT Estetik (Unlimited)",
-            "Buat Soal Otomatis",
+            "Buat Soal Otomatis (Unlimited)",
             "Download Format Word (Bisa Diedit)",
+            "Download Format Pdf",
             "Simpan Riwayat Selamanya",
             "Bebas Watermark & Iklan"
         ],

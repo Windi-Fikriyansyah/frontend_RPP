@@ -15,12 +15,12 @@ const features = [
         description: "Hasilkan Modul Ajar lengkap (Tujuan, Langkah, Asesmen) hanya dengan memasukkan topik materi.",
         color: "primary"
     },
-    {
-        icon: Palette,
-        title: "Otomatis Jadi PPT Estetik",
-        description: "Ubah materi RPP Anda menjadi slide presentasi yang siap pakai di kelas tanpa perlu desain manual.",
-        color: "secondary"
-    },
+    // {
+    //     icon: Palette,
+    //     title: "Otomatis Jadi PPT Estetik",
+    //     description: "Ubah materi RPP Anda menjadi slide presentasi yang siap pakai di kelas tanpa perlu desain manual.",
+    //     color: "secondary"
+    // },
     {
         icon: BookOpen,
         title: "Generator Soal",

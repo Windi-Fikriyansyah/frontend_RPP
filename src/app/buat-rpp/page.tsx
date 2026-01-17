@@ -728,7 +728,7 @@ export default function DashboardPage() {
                                     </div>
                                     {!generating && result && (
                                         <div className="flex gap-2 w-full md:w-auto">
-                                            <Button
+                                            {/* <Button
                                                 size="sm"
                                                 disabled={generatingPPT}
                                                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold"
@@ -739,7 +739,7 @@ export default function DashboardPage() {
                                                 ) : (
                                                     <><Presentation className="w-4 h-4 mr-2" /> Buat PPT</>
                                                 )}
-                                            </Button>
+                                            </Button> */}
                                             <Button
                                                 size="sm"
                                                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold"
