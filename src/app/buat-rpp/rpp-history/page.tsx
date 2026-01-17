@@ -26,7 +26,8 @@ import {
     ChevronRight,
     MoreVertical,
     Plus,
-    Loader2
+    Loader2,
+    FileQuestion
 } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
@@ -43,6 +44,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -70,6 +73,15 @@ export default function RPPHistoryPage() {
     const [filterMapel, setFilterMapel] = useState("Semua");
     const [filterKelas, setFilterKelas] = useState("Semua");
     const [deleteId, setDeleteId] = useState<number | null>(null);
+
+    // Quiz State
+    const [openQuizModal, setOpenQuizModal] = useState(false);
+    const [quizTargetRPP, setQuizTargetRPP] = useState<any>(null);
+    const [quizConfig, setQuizConfig] = useState({
+        jumlah_soal: 5,
+        tingkat_kesulitan: "Sedang"
+    });
+    const [generatingQuiz, setGeneratingQuiz] = useState(false);
 
     useEffect(() => {
         fetchUser();
@@ -174,6 +186,74 @@ export default function RPPHistoryPage() {
             toast.error("Gagal mendownload file PDF");
         }
     };
+
+    const handleOpenQuizModal = (item: any) => {
+        if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
+            toast.error("Fitur Premium", {
+                description: "Upgrade paket Anda untuk membuat soal otomatis dari RPP ini.",
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/harga")
+                }
+            });
+            return;
+        }
+        setQuizTargetRPP(item);
+        setOpenQuizModal(true);
+    };
+
+    const handleGenerateQuiz = async () => {
+        if (!quizTargetRPP) return;
+        setGeneratingQuiz(true);
+        try {
+            const payload = {
+                rpp_content: quizTargetRPP.content_markdown,
+                mapel: quizTargetRPP.mapel,
+                topik: quizTargetRPP.topik,
+                jumlah_soal: quizConfig.jumlah_soal,
+                tingkat_kesulitan: quizConfig.tingkat_kesulitan
+            };
+
+            const res = await api.post("/api/rpp/generate-quiz", payload);
+            if (res.data.status === "success") {
+                // Update history locally to include the new quiz_id
+                setHistory(history.map(h => {
+                    if (h.id === quizTargetRPP.id) {
+                        return { ...h, quiz_id: res.data.quiz_id };
+                    }
+                    return h;
+                }));
+
+                toast.success("Soal Berhasil Dibuat!", {
+                    description: "Soal telah disimpan dan siap diunduh.",
+                });
+                setOpenQuizModal(false);
+                setQuizTargetRPP(null);
+            }
+        } catch (e: any) {
+            console.error("Quiz Error:", e);
+            toast.error("Gagal generate soal. Silakan coba lagi.");
+        } finally {
+            setGeneratingQuiz(false);
+        }
+    };
+
+    const handleDownloadQuiz = async (quizId: number, topik: string) => {
+        try {
+            const response = await api.get(`/api/rpp/quiz/${quizId}/download-word`, { responseType: 'blob' });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Quiz_${topik}.docx`.replace(/\s+/g, '_'));
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success("File Soal berhasil diunduh");
+        } catch (e) {
+            toast.error("Gagal mengunduh soal");
+        }
+    }
 
     const resetFilters = () => {
         setSearchTerm("");
@@ -372,6 +452,28 @@ export default function RPPHistoryPage() {
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </Button>
+                                                    {/* Quiz Button */}
+                                                    {item.quiz_id ? (
+                                                        <Button
+                                                            variant="hero-outline"
+                                                            size="sm"
+                                                            onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)}
+                                                            className="h-9 w-9 p-0 rounded-xl text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-100"
+                                                            title="Unduh Soal"
+                                                        >
+                                                            <FileQuestion className="w-4 h-4" />
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            variant="hero-outline"
+                                                            size="sm"
+                                                            onClick={() => handleOpenQuizModal(item)}
+                                                            className="h-9 w-9 p-0 rounded-xl text-muted-foreground hover:text-purple-600"
+                                                            title="Buat Soal"
+                                                        >
+                                                            <FileQuestion className="w-4 h-4" />
+                                                        </Button>
+                                                    )}
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
                                                             <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl">
@@ -388,6 +490,15 @@ export default function RPPHistoryPage() {
                                                             <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg" onClick={() => handleExportPDF(item)}>
                                                                 <Download className="w-4 h-4 text-muted-foreground" /> Unduh PDF
                                                             </DropdownMenuItem>
+                                                            {item.quiz_id ? (
+                                                                <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg text-purple-600" onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)}>
+                                                                    <FileQuestion className="w-4 h-4" /> Unduh Soal
+                                                                </DropdownMenuItem>
+                                                            ) : (
+                                                                <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg" onClick={() => handleOpenQuizModal(item)}>
+                                                                    <FileQuestion className="w-4 h-4 text-muted-foreground" /> Buat Soal
+                                                                </DropdownMenuItem>
+                                                            )}
                                                             <div className="h-px bg-border my-1" />
                                                             <DropdownMenuItem
                                                                 className="cursor-pointer gap-2 py-2 px-3 text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg"
@@ -428,7 +539,18 @@ export default function RPPHistoryPage() {
                                             <div className="flex gap-2">
                                                 <Button size="sm" variant="hero-outline" onClick={() => setSelectedRPP(item)} className="h-9 px-4 rounded-xl text-xs">
                                                     Lihat
+                                                    Lihat
                                                 </Button>
+                                                {/* Quiz Button Mobile */}
+                                                {item.quiz_id ? (
+                                                    <Button size="sm" variant="outline" onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)} className="h-9 w-9 p-0 rounded-xl text-purple-600 border-purple-200 bg-purple-50">
+                                                        <FileQuestion className="w-4 h-4" />
+                                                    </Button>
+                                                ) : (
+                                                    <Button size="sm" variant="ghost" onClick={() => handleOpenQuizModal(item)} className="h-9 w-9 p-0 rounded-xl">
+                                                        <FileQuestion className="w-4 h-4 text-muted-foreground" />
+                                                    </Button>
+                                                )}
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-xl bg-muted/30">
@@ -442,6 +564,16 @@ export default function RPPHistoryPage() {
                                                         <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => handleExportPDF(item)}>
                                                             <Download className="w-4 h-4" /> Unduh PDF
                                                         </DropdownMenuItem>
+                                                        {item.quiz_id ? (
+                                                            <DropdownMenuItem className="cursor-pointer gap-2 text-purple-600" onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)}>
+                                                                <FileQuestion className="w-4 h-4" /> Unduh Soal
+                                                            </DropdownMenuItem>
+                                                        ) : (
+                                                            <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => handleOpenQuizModal(item)}>
+                                                                <FileQuestion className="w-4 h-4 text-muted-foreground" /> Buat Soal
+                                                            </DropdownMenuItem>
+                                                        )}
+                                                        <div className="h-px bg-border my-1" />
                                                         <DropdownMenuItem
                                                             className="cursor-pointer gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
                                                             onClick={() => setDeleteId(item.id)}
@@ -580,6 +712,67 @@ export default function RPPHistoryPage() {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
+
+                {/* GENERATE QUIZ MODAL */}
+                <Dialog open={openQuizModal} onOpenChange={setOpenQuizModal}>
+                    <DialogContent className="sm:max-w-[425px] rounded-2xl">
+                        <DialogHeader>
+                            <DialogTitle>Buat Latihan Soal</DialogTitle>
+                            <DialogDescription>
+                                AI akan membuatkan soal pilihan ganda berdasarkan RPP <strong>{quizTargetRPP?.topik}</strong>.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="jumlah" className="text-right">
+                                    Jumlah
+                                </Label>
+                                <Select
+                                    value={quizConfig.jumlah_soal.toString()}
+                                    onValueChange={(v) => setQuizConfig({ ...quizConfig, jumlah_soal: parseInt(v) })}
+                                >
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Pilih" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="5">5 Soal</SelectItem>
+                                        <SelectItem value="10">10 Soal</SelectItem>
+                                        <SelectItem value="15">15 Soal</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="kesulitan" className="text-right">
+                                    Kesulitan
+                                </Label>
+                                <Select
+                                    value={quizConfig.tingkat_kesulitan}
+                                    onValueChange={(v) => setQuizConfig({ ...quizConfig, tingkat_kesulitan: v })}
+                                >
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Pilih" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Mudah">Mudah</SelectItem>
+                                        <SelectItem value="Sedang">Sedang</SelectItem>
+                                        <SelectItem value="Sulit">Sulit</SelectItem>
+                                        <SelectItem value="HOTS">HOTS</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-3">
+                            <Button variant="outline" className="rounded-xl" onClick={() => setOpenQuizModal(false)}>Batal</Button>
+                            <Button className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white" onClick={handleGenerateQuiz} disabled={generatingQuiz}>
+                                {generatingQuiz ? (
+                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Membuat Soal...</>
+                                ) : (
+                                    "Buat Soal Sekarang"
+                                )}
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </main>
         </div>
     );
