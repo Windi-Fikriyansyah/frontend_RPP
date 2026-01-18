@@ -56,12 +56,12 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center gap-2 text-background/70 text-sm">
                                 <Phone className="w-4 h-4" />
-                                +62 812-3456-7890
+                                +62 896-2298-1080
                             </li>
-                            <li className="flex items-start gap-2 text-background/70 text-sm">
+                            {/* <li className="flex items-start gap-2 text-background/70 text-sm">
                                 <MapPin className="w-4 h-4 mt-0.5" />
                                 Jakarta, Indonesia
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>
@@ -72,7 +72,12 @@ const Footer = () => {
                         © 2025 RPPGenius. Hak cipta dilindungi.
                     </p>
                     <div className="flex gap-6">
-
+                        <Link href="/kebijakan-privasi" className="text-background/50 hover:text-background text-sm transition-colors">
+                            Kebijakan Privasi
+                        </Link>
+                        <Link href="/ketentuan-layanan" className="text-background/50 hover:text-background text-sm transition-colors">
+                            Ketentuan Layanan
+                        </Link>
                     </div>
                 </div>
             </div>
