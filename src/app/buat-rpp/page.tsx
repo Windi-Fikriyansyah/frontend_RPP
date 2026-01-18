@@ -195,8 +195,28 @@ export default function DashboardPage() {
 
         try {
             const res = await api.post("/api/rpp/generate", payload);
-            setResult(res.data.data.rpp_markdown);
+            const markdown = res.data.data.rpp_markdown;
+            setResult(markdown);
             setActiveTab("result"); // Auto switch to result tab
+
+            // Auto Save
+            try {
+                await api.post("/api/rpp/save", {
+                    mapel: formData.mapel,
+                    kelas: formData.kelas,
+                    topik: formData.topik,
+                    content_markdown: markdown,
+                    input_data: formData
+                });
+                toast.success("RPP Berhasil Dibuat & Disimpan!", {
+                    description: "Tersimpan otomatis di Riwayat RPP.",
+                    duration: 4000
+                });
+            } catch (saveError) {
+                console.error("Auto-save failed", saveError);
+                toast.warning("RPP selesai dibuat, tapi gagal disimpan otomatis.");
+            }
+
         } catch (err: any) {
             if (err.response?.status === 403) {
                 toast.error("Kuota Habis", {
@@ -801,10 +821,10 @@ export default function DashboardPage() {
 
                             {result && (
                                 <div className="p-3 border-t bg-gray-50 flex flex-wrap justify-end gap-2 print:hidden">
-                                    <Button variant="outline" onClick={handleSave} className="border-green-600 text-green-700 hover:bg-green-50">
+                                    {/* <Button variant="outline" onClick={handleSave} className="border-green-600 text-green-700 hover:bg-green-50">
                                         <Save className="w-4 h-4 mr-2" />
                                         Simpan
-                                    </Button>
+                                    </Button> */}
                                     {/* <Button variant="outline" onClick={handleCopy}>
                                         <Copy className="w-4 h-4 mr-2" />
                                         Copy Teks
