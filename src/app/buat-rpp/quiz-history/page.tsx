@@ -55,8 +55,10 @@ import {
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function QuizHistoryPage() {
+    const router = useRouter();
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
@@ -65,17 +67,34 @@ export default function QuizHistoryPage() {
     const [filterDifficulty, setFilterDifficulty] = useState("Semua");
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
+    const [user, setUser] = useState<any>(null);
+
     useEffect(() => {
+        fetchUser();
         fetchHistory();
     }, []);
+
+    const fetchUser = async () => {
+        try {
+            const res = await api.get("/auth/me");
+            setUser(res.data);
+        } catch (e) {
+            console.error("Failed to load user");
+        }
+    };
 
     const fetchHistory = async () => {
         try {
             const res = await api.get("/api/rpp/quiz-history");
             setHistory(res.data);
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            toast.error("Gagal mengambil riwayat kuis");
+            // If backend returns 403 or empty due to free status, handle gracefully
+            if (e.response?.status === 403) {
+                setHistory([]);
+            } else {
+                toast.error("Gagal mengambil riwayat kuis");
+            }
         } finally {
             setLoading(false);
         }
@@ -94,6 +113,17 @@ export default function QuizHistoryPage() {
     };
 
     const handleExportWord = async (item: any) => {
+        if (user?.subscription_plan !== "premium" && user?.subscription_plan !== "school") {
+            toast.error("Fitur Premium", {
+                description: "Upgrade ke Paket Premium untuk mengunduh soal format Word (.docx).",
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/harga")
+                }
+            });
+            return;
+        }
+
         try {
             const response = await api.post("/api/rpp/export-quiz-word", {
                 quiz_data: item.quiz_data,
@@ -110,6 +140,26 @@ export default function QuizHistoryPage() {
             link.remove();
         } catch (e) {
             toast.error("Gagal mendownload file Word");
+        }
+    };
+
+    const handleExportPDF = async (item: any) => {
+        try {
+            const response = await api.post("/api/rpp/export-quiz-pdf", {
+                quiz_data: item.quiz_data,
+                mapel: item.mapel,
+                topik: item.topik
+            }, { responseType: 'blob' });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Quiz_${item.topik}.pdf`.replace(/\s+/g, '_'));
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (e) {
+            toast.error("Gagal mendownload file PDF");
         }
     };
 
@@ -262,7 +312,28 @@ export default function QuizHistoryPage() {
                 </Card>
 
                 {/* DATA DISPLAY */}
-                {filteredHistory.length > 0 ? (
+                {!user || user.subscription_plan === "free" ? (
+                    /* LOCKED STATE FOR FREE USERS */
+                    <div className="flex flex-col items-center justify-center py-20 animate-fade-in-up">
+                        <div className="relative mb-8 group">
+                            <div className="w-40 h-40 bg-secondary/5 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                                <RotateCcw className="w-20 h-20 text-secondary opacity-20 group-hover:opacity-40 transition-opacity" />
+                            </div>
+                            <div className="absolute bottom-2 right-2 w-10 h-10 text-secondary p-2 bg-card rounded-2xl shadow-medium flex items-center justify-center">
+                                <Search className="w-6 h-6" />
+                            </div>
+                        </div>
+                        <h3 className="text-2xl font-bold text-foreground mb-2 text-center">Simpan Riwayat Soal Selamanya</h3>
+                        <p className="text-muted-foreground text-center max-w-sm mb-8 leading-relaxed">
+                            Fitur riwayat soal hanya tersedia untuk paket <strong>Standar, Pro, dan Premium</strong>. Upgrade sekarang untuk menyimpan dan mengakses soal Anda kapan saja!
+                        </p>
+                        <Link href="/harga">
+                            <Button variant="hero" size="lg" className="rounded-2xl px-12 gradient-secondary shadow-glow-secondary">
+                                Upgrade Sekarang
+                            </Button>
+                        </Link>
+                    </div>
+                ) : filteredHistory.length > 0 ? (
                     <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                         {/* Desktop Table */}
                         <div className="hidden md:block overflow-hidden rounded-3xl border border-border shadow-soft bg-card">
@@ -330,7 +401,7 @@ export default function QuizHistoryPage() {
                                                             <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg" onClick={() => handleExportWord(item)}>
                                                                 <Download className="w-4 h-4 text-muted-foreground" /> Unduh DOCX
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg">
+                                                            <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg" onClick={() => handleExportPDF(item)}>
                                                                 <Download className="w-4 h-4 text-muted-foreground" /> Unduh PDF
                                                             </DropdownMenuItem>
                                                             <div className="h-px bg-border my-1" />
@@ -426,7 +497,7 @@ export default function QuizHistoryPage() {
                 )}
 
                 {/* PAGINATION (Mockup) */}
-                {filteredHistory.length > 0 && (
+                {user?.subscription_plan !== "free" && filteredHistory.length > 0 && (
                     <div className="mt-12 flex items-center justify-between border-t border-border pt-6 animate-fade-in-up">
                         <p className="text-sm text-muted-foreground">
                             Menampilkan <span className="font-bold text-foreground">{filteredHistory.length}</span> dari <span className="font-bold text-foreground">{totalQuizzes}</span> Kuis
@@ -474,6 +545,7 @@ export default function QuizHistoryPage() {
                                     <Button
                                         variant="hero"
                                         size="sm"
+                                        onClick={() => handleExportPDF(selectedQuiz)}
                                         className="rounded-xl h-12 px-8 gradient-secondary shadow-glow-secondary flex-1 md:flex-none"
                                     >
                                         <Download className="w-4 h-4 mr-2" /> PDF
@@ -513,7 +585,7 @@ export default function QuizHistoryPage() {
                                                             </div>
                                                         ))}
                                                     </div>
-                                                    {q.penjelasan && (
+                                                    {q.penjelasan && q.penjelasan.trim().length > 0 && (
                                                         <div className="p-5 bg-blue-50/50 border border-blue-100 rounded-2xl relative overflow-hidden group/penjelasan">
                                                             <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
                                                             <h5 className="font-bold text-blue-900 flex items-center gap-2 mb-2">

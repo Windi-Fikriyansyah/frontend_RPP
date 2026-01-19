@@ -398,9 +398,9 @@ export default function DashboardPage() {
             setShowQuizModal(false);
             toast.success("Soal Berhasil Dibuat dan Tersimpan!");
 
-            // Automatic Download (Word Only)
+            // Automatic Download PDF (Safe default)
             setTimeout(() => {
-                handleExportQuizWord(quizData);
+                handleExportQuizPDF(quizData);
             }, 500);
 
         } catch (e: any) {
@@ -408,6 +408,28 @@ export default function DashboardPage() {
             toast.error("Gagal generate soal. Silakan coba lagi.");
         } finally {
             setGeneratingQuiz(false);
+        }
+    };
+
+    const handleExportQuizPDF = async (data: any) => {
+        try {
+            const response = await api.post("/api/rpp/export-quiz-pdf", {
+                quiz_data: data,
+                mapel: formData.mapel,
+                topik: formData.topik
+            }, { responseType: 'blob' });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Quiz_${formData.topik}.pdf`.replace(/\s+/g, '_'));
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success("Soal PDF berhasil diunduh");
+        } catch (e) {
+            console.error("PDF Export Error:", e);
+            toast.error("Gagal download PDF Soal");
         }
     };
 
@@ -426,8 +448,14 @@ export default function DashboardPage() {
             document.body.appendChild(link);
             link.click();
             link.remove();
-        } catch (e) {
-            console.error("Word Export Error:", e);
+            toast.success("Soal Word berhasil diunduh");
+        } catch (e: any) {
+            if (e.response?.status === 403) {
+                toast.error("Fitur Premium", { description: "Download Word hanya untuk paket Premium." });
+            } else {
+                console.error("Word Export Error:", e);
+                toast.error("Gagal download Word Soal");
+            }
         }
     };
 
@@ -465,13 +493,17 @@ export default function DashboardPage() {
                                     {user?.subscription_plan && (
                                         <div className={cn(
                                             "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm",
-                                            user.subscription_plan === "pro" ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white" :
-                                                user.subscription_plan === "school" ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white" :
-                                                    "bg-gray-100 text-gray-500 border border-gray-200"
+                                            user.subscription_plan === "standard" ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white" :
+                                                user.subscription_plan === "pro" ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white" :
+                                                    user.subscription_plan === "premium" ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-glow-amber" :
+                                                        user.subscription_plan === "school" ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white" :
+                                                            "bg-gray-100 text-gray-500 border border-gray-200"
                                         )}>
-                                            {user.subscription_plan === "pro" ? "✨ PRO PLAN" :
-                                                user.subscription_plan === "school" ? "🏫 SCHOOL PLAN" :
-                                                    "FREE PLAN"}
+                                            {user.subscription_plan === "standard" ? "⭐ STANDAR" :
+                                                user.subscription_plan === "pro" ? "✨ PRO PLAN" :
+                                                    user.subscription_plan === "premium" ? "👑 PREMIUM" :
+                                                        user.subscription_plan === "school" ? "🏫 SCHOOL" :
+                                                            "GRATIS"}
                                         </div>
                                     )}
                                     <CardTitle>Generator RPP Kurikulum Merdeka</CardTitle>
@@ -760,26 +792,50 @@ export default function DashboardPage() {
                                                     <><Presentation className="w-4 h-4 mr-2" /> Buat PPT</>
                                                 )}
                                             </Button> */}
-                                            <Button
-                                                size="sm"
-                                                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold"
-                                                onClick={() => {
-                                                    if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
-                                                        toast.error("Fitur Premium", {
-                                                            description: "Upgrade ke paket Pro untuk membuat soal otomatis!",
-                                                            action: {
-                                                                label: "Upgrade",
-                                                                onClick: () => router.push("/harga")
-                                                            }
-                                                        });
-                                                        return;
-                                                    }
-                                                    setShowQuizModal(true);
-                                                }}
-                                            >
-                                                <FileQuestion className="w-4 h-4 mr-2" />
-                                                Buat Soal
-                                            </Button>
+                                            {quizResult ? (
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        className="bg-green-600 hover:bg-green-700 text-white font-semibold"
+                                                        onClick={() => handleExportQuizPDF(quizResult)} // Default PDF for All Paid
+                                                    >
+                                                        <Download className="w-4 h-4 mr-2" />
+                                                        Unduh Soal (PDF)
+                                                    </Button>
+                                                    {(user?.subscription_plan === "premium" || user?.subscription_plan === "school") && (
+                                                        <Button
+                                                            size="sm"
+                                                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                                                            onClick={() => handleExportQuizWord(quizResult)}
+                                                        >
+                                                            <FileText className="w-4 h-4 mr-2" />
+                                                            Unduh (.docx)
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    size="sm"
+                                                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold"
+                                                    onClick={() => {
+                                                        // Block Free Users
+                                                        if (!user?.subscription_plan || user?.subscription_plan === "free") {
+                                                            toast.error("Fitur Berbayar", {
+                                                                description: "Upgrade ke paket Standar/Pro untuk membuat soal otomatis!",
+                                                                action: {
+                                                                    label: "Upgrade",
+                                                                    onClick: () => router.push("/harga")
+                                                                }
+                                                            });
+                                                            return;
+                                                        }
+                                                        setShowQuizModal(true);
+                                                    }}
+                                                >
+                                                    <FileQuestion className="w-4 h-4 mr-2" />
+                                                    Buat Soal
+                                                </Button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -930,6 +986,7 @@ export default function DashboardPage() {
                                     <SelectValue placeholder="Pilih jumlah soal" />
                                 </SelectTrigger>
                                 <SelectContent>
+                                    {/* Limit max questions to 20 as requested */}
                                     {[5, 10, 15, 20].map((n) => (
                                         <SelectItem key={n} value={n.toString()}>{n} Soal</SelectItem>
                                     ))}

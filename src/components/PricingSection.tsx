@@ -15,51 +15,68 @@ const plans = [
         price: "Rp 0",
         priceNumeric: 0,
         period: "selamanya",
-        description: "Cocok untuk mencoba fitur dasar",
+        description: "Coba fitur dasar RPP otomatis",
         features: [
-            "3 RPP per bulan",
-            "Export PDF",
-            // "Copy Text"
+            "2 RPP Total (Maksimal)",
+            "Download RPP Format PDF ",
+            "Tanpa Buat Soal",
+            "Tanpa Riwayat RPP",
+            "Tanpa Riwayat Soal"
         ],
         cta: "Mulai Gratis",
         popular: false
     },
     {
-        id: "monthly",
-        name: "Pro (Guru Juara)",
-        price: "Rp 39.000",
-        priceNumeric: 39000,
+        id: "standard",
+        name: "Standar",
+        price: "Rp 29.000",
+        priceNumeric: 29000,
         period: "per bulan",
-        description: "Solusi lengkap administrasi guru anti pusing",
+        description: "Untuk kebutuhan administrasi dasar",
         features: [
-            "RPP Tanpa Batas (Unlimited)",
-            "Buat Soal Otomatis (Unlimited)",
-            "Download Format Word (Bisa Diedit)",
-            "Download Format Pdf",
-            "Simpan Riwayat Selamanya",
-            "Bebas Watermark & Iklan"
+            "10 RPP per bulan",
+            "Download RPP Format Word (Bisa Edit) & PDF",
+            "Buat Soal",
+            "Kunci Jawaban (Tanpa Pembahasan)",
+            "Download Soal PDF",
+            "Simpan Riwayat RPP & Soal"
         ],
-        cta: "Langganan Sekarang",
+        cta: "Pilih Standar",
+        popular: false
+    },
+    {
+        id: "pro",
+        name: "Pro",
+        price: "Rp 59.000",
+        priceNumeric: 59000,
+        period: "per bulan",
+        description: "Paling pas untuk guru aktif",
+        features: [
+            "25 RPP per bulan",
+            "Semua fitur Standar",
+            "Kunci + Pembahasan Lengkap",
+            "Prioritas Server",
+        ],
+        cta: "Pilih Pro",
         popular: true
     },
-    // {
-    //     id: "school",
-    //     name: "Sekolah",
-    //     price: "Rp 299.000",
-    //     priceNumeric: 299000,
-    //     period: "per bulan",
-    //     description: "Untuk sekolah dengan banyak guru",
-    //     features: [
-    //         "Semua fitur Pro",
-    //         "Hingga 50 guru",
-    //         "Dashboard admin",
-    //         "Laporan statistik",
-    //         "Training onboarding",
-    //         "Dedicated support"
-    //     ],
-    //     cta: "Pilih Paket",
-    //     popular: false
-    // }
+    {
+        id: "premium",
+        name: "Premium",
+        price: "Rp 129.000",
+        priceNumeric: 129000,
+        period: "per bulan",
+        description: "Solusi total tanpa batas fitur",
+        features: [
+            "60 RPP per bulan",
+            "Semua fitur Pro",
+            "Download Soal Format Word (.docx)",
+            "Support Prioritas",
+            "Akses Fitur Beta"
+        ],
+        cta: "Pilih Premium",
+        popular: false
+    }
 ];
 
 type TripayChannel = {

@@ -188,7 +188,7 @@ export default function RPPHistoryPage() {
     };
 
     const handleOpenQuizModal = (item: any) => {
-        if (user?.subscription_plan !== "pro" && user?.subscription_plan !== "school") {
+        if (!user?.subscription_plan || user?.subscription_plan === "free") {
             toast.error("Fitur Premium", {
                 description: "Upgrade paket Anda untuk membuat soal otomatis dari RPP ini.",
                 action: {
@@ -238,7 +238,34 @@ export default function RPPHistoryPage() {
         }
     };
 
-    const handleDownloadQuiz = async (quizId: number, topik: string) => {
+    const handleDownloadQuizPDF = async (quizId: number, topik: string) => {
+        try {
+            const response = await api.get(`/api/rpp/quiz/${quizId}/download-pdf`, { responseType: 'blob' });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Quiz_${topik}.pdf`.replace(/\s+/g, '_'));
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success("File Soal PDF berhasil diunduh");
+        } catch (e) {
+            toast.error("Gagal mengunduh soal PDF");
+        }
+    }
+
+    const handleDownloadQuizWord = async (quizId: number, topik: string) => {
+        if (user?.subscription_plan !== "premium" && user?.subscription_plan !== "school") {
+            toast.error("Fitur Premium", {
+                description: "Upgrade ke Paket Premium untuk mengunduh soal format Word (.docx).",
+                action: {
+                    label: "Upgrade",
+                    onClick: () => router.push("/harga")
+                }
+            });
+            return;
+        }
         try {
             const response = await api.get(`/api/rpp/quiz/${quizId}/download-word`, { responseType: 'blob' });
 
@@ -249,9 +276,9 @@ export default function RPPHistoryPage() {
             document.body.appendChild(link);
             link.click();
             link.remove();
-            toast.success("File Soal berhasil diunduh");
+            toast.success("File Soal Word berhasil diunduh");
         } catch (e) {
-            toast.error("Gagal mengunduh soal");
+            toast.error("Gagal mengunduh soal Word");
         }
     }
 
@@ -400,7 +427,28 @@ export default function RPPHistoryPage() {
                 </Card>
 
                 {/* DATA DISPLAY */}
-                {filteredHistory.length > 0 ? (
+                {user?.subscription_plan === "free" ? (
+                    /* LOCKED STATE FOR FREE USERS */
+                    <div className="flex flex-col items-center justify-center py-20 animate-fade-in-up">
+                        <div className="relative mb-8 group">
+                            <div className="w-40 h-40 bg-primary/5 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                                <RotateCcw className="w-20 h-20 text-primary opacity-20 group-hover:opacity-40 transition-opacity" />
+                            </div>
+                            <div className="absolute bottom-2 right-2 w-10 h-10 text-primary p-2 bg-card rounded-2xl shadow-medium flex items-center justify-center">
+                                <Search className="w-6 h-6" />
+                            </div>
+                        </div>
+                        <h3 className="text-2xl font-bold text-foreground mb-2 text-center">Simpan Riwayat RPP Selamanya</h3>
+                        <p className="text-muted-foreground text-center max-w-sm mb-8 leading-relaxed">
+                            Fitur riwayat RPP hanya tersedia untuk paket <strong>Standar, Pro, dan Premium</strong>. Upgrade sekarang untuk menyimpan dan mengakses RPP Anda kapan saja!
+                        </p>
+                        <Link href="/harga">
+                            <Button variant="hero" size="lg" className="rounded-2xl px-12 shadow-glow-primary">
+                                Upgrade Sekarang
+                            </Button>
+                        </Link>
+                    </div>
+                ) : filteredHistory.length > 0 ? (
                     <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                         {/* Desktop Table */}
                         <div className="hidden md:block overflow-hidden rounded-3xl border border-border shadow-soft bg-card">
@@ -443,7 +491,7 @@ export default function RPPHistoryPage() {
                                             </TableCell>
                                             <TableCell className="py-5 text-right pr-8">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <Button
+                                                    {/* <Button
                                                         variant="hero-outline"
                                                         size="sm"
                                                         onClick={() => setSelectedRPP(item)}
@@ -451,18 +499,28 @@ export default function RPPHistoryPage() {
                                                         title="Lihat Detail"
                                                     >
                                                         <Eye className="w-4 h-4" />
-                                                    </Button>
-                                                    {/* Quiz Button */}
+                                                    </Button> */}
+                                                    {/* Quiz Button with Dropdown if exists */}
                                                     {item.quiz_id ? (
-                                                        <Button
-                                                            variant="hero-outline"
-                                                            size="sm"
-                                                            onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)}
-                                                            className="h-9 w-9 p-0 rounded-xl text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-100"
-                                                            title="Unduh Soal"
-                                                        >
-                                                            <FileQuestion className="w-4 h-4" />
-                                                        </Button>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="hero-outline"
+                                                                    size="sm"
+                                                                    className="h-9 w-9 p-0 rounded-xl text-purple-600 border-purple-200 bg-purple-50 hover:bg-purple-100"
+                                                                >
+                                                                    <FileQuestion className="w-4 h-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="rounded-xl border-border shadow-medium">
+                                                                <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg text-purple-600" onClick={() => handleDownloadQuizPDF(item.quiz_id, item.topik)}>
+                                                                    <Download className="w-4 h-4" /> Unduh PDF Soal
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg text-blue-600" onClick={() => handleDownloadQuizWord(item.quiz_id, item.topik)}>
+                                                                    <FileText className="w-4 h-4" /> Unduh Word Soal
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                     ) : (
                                                         <Button
                                                             variant="hero-outline"
@@ -491,9 +549,14 @@ export default function RPPHistoryPage() {
                                                                 <Download className="w-4 h-4 text-muted-foreground" /> Unduh PDF
                                                             </DropdownMenuItem>
                                                             {item.quiz_id ? (
-                                                                <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg text-purple-600" onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)}>
-                                                                    <FileQuestion className="w-4 h-4" /> Unduh Soal
-                                                                </DropdownMenuItem>
+                                                                <>
+                                                                    <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg text-purple-600" onClick={() => handleDownloadQuizPDF(item.quiz_id, item.topik)}>
+                                                                        <Download className="w-4 h-4" /> Unduh PDF Soal
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg text-blue-600" onClick={() => handleDownloadQuizWord(item.quiz_id, item.topik)}>
+                                                                        <FileText className="w-4 h-4" /> Unduh Word Soal
+                                                                    </DropdownMenuItem>
+                                                                </>
                                                             ) : (
                                                                 <DropdownMenuItem className="cursor-pointer gap-2 py-2 px-3 rounded-lg" onClick={() => handleOpenQuizModal(item)}>
                                                                     <FileQuestion className="w-4 h-4 text-muted-foreground" /> Buat Soal
@@ -543,9 +606,17 @@ export default function RPPHistoryPage() {
                                                 </Button>
                                                 {/* Quiz Button Mobile */}
                                                 {item.quiz_id ? (
-                                                    <Button size="sm" variant="outline" onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)} className="h-9 w-9 p-0 rounded-xl text-purple-600 border-purple-200 bg-purple-50">
-                                                        <FileQuestion className="w-4 h-4" />
-                                                    </Button>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button size="sm" variant="outline" className="h-9 w-9 p-0 rounded-xl text-purple-600 border-purple-200 bg-purple-50">
+                                                                <FileQuestion className="w-4 h-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="rounded-xl border-border">
+                                                            <DropdownMenuItem onClick={() => handleDownloadQuizPDF(item.quiz_id, item.topik)}>PDF Soal</DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleDownloadQuizWord(item.quiz_id, item.topik)}>Word Soal</DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 ) : (
                                                     <Button size="sm" variant="ghost" onClick={() => handleOpenQuizModal(item)} className="h-9 w-9 p-0 rounded-xl">
                                                         <FileQuestion className="w-4 h-4 text-muted-foreground" />
@@ -565,9 +636,14 @@ export default function RPPHistoryPage() {
                                                             <Download className="w-4 h-4" /> Unduh PDF
                                                         </DropdownMenuItem>
                                                         {item.quiz_id ? (
-                                                            <DropdownMenuItem className="cursor-pointer gap-2 text-purple-600" onClick={() => handleDownloadQuiz(item.quiz_id, item.topik)}>
-                                                                <FileQuestion className="w-4 h-4" /> Unduh Soal
-                                                            </DropdownMenuItem>
+                                                            <>
+                                                                <DropdownMenuItem className="cursor-pointer gap-2 text-purple-600" onClick={() => handleDownloadQuizPDF(item.quiz_id, item.topik)}>
+                                                                    <Download className="w-4 h-4" /> Unduh PDF Soal
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem className="cursor-pointer gap-2 text-blue-600" onClick={() => handleDownloadQuizWord(item.quiz_id, item.topik)}>
+                                                                    <FileText className="w-4 h-4" /> Unduh Word Soal
+                                                                </DropdownMenuItem>
+                                                            </>
                                                         ) : (
                                                             <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => handleOpenQuizModal(item)}>
                                                                 <FileQuestion className="w-4 h-4 text-muted-foreground" /> Buat Soal
@@ -612,7 +688,7 @@ export default function RPPHistoryPage() {
                 )}
 
                 {/* PAGINATION (Mockup) */}
-                {filteredHistory.length > 0 && (
+                {user?.subscription_plan !== "free" && filteredHistory.length > 0 && (
                     <div className="mt-12 flex items-center justify-between border-t border-border pt-6 animate-fade-in-up">
                         <p className="text-sm text-muted-foreground">
                             Menampilkan <span className="font-bold text-foreground">{filteredHistory.length}</span> dari <span className="font-bold text-foreground">{totalDocs}</span> RPP
