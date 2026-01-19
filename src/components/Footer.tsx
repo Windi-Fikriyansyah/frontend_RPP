@@ -50,10 +50,10 @@ const Footer = () => {
                     <div>
                         <h4 className="font-semibold text-background mb-4">Kontak</h4>
                         <ul className="space-y-3">
-                            <li className="flex items-center gap-2 text-background/70 text-sm">
+                            {/* <li className="flex items-center gap-2 text-background/70 text-sm">
                                 <Mail className="w-4 h-4" />
                                 halo@rppgenius.id
-                            </li>
+                            </li> */}
                             <li className="flex items-center gap-2 text-background/70 text-sm">
                                 <Phone className="w-4 h-4" />
                                 +62 896-2298-1080

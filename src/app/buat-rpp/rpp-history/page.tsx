@@ -27,7 +27,10 @@ import {
     MoreVertical,
     Plus,
     Loader2,
-    FileQuestion
+    FileQuestion,
+    Lock,
+    CheckCircle2,
+    Sparkles
 } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
@@ -428,25 +431,64 @@ export default function RPPHistoryPage() {
 
                 {/* DATA DISPLAY */}
                 {user?.subscription_plan === "free" ? (
-                    /* LOCKED STATE FOR FREE USERS */
-                    <div className="flex flex-col items-center justify-center py-20 animate-fade-in-up">
-                        <div className="relative mb-8 group">
-                            <div className="w-40 h-40 bg-primary/5 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-                                <RotateCcw className="w-20 h-20 text-primary opacity-20 group-hover:opacity-40 transition-opacity" />
-                            </div>
-                            <div className="absolute bottom-2 right-2 w-10 h-10 text-primary p-2 bg-card rounded-2xl shadow-medium flex items-center justify-center">
-                                <Search className="w-6 h-6" />
-                            </div>
+                    /* PREMIUM LOCKED STATE FOR FREE USERS */
+                    <div className="relative py-12 md:py-20 animate-fade-in-up">
+                        {/* Background Decorative Glow */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-full blur-[120px] opacity-20 pointer-events-none overflow-hidden">
+                            <div className="absolute top-0 left-0 w-72 h-72 bg-primary rounded-full" />
+                            <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-400 rounded-full" />
                         </div>
-                        <h3 className="text-2xl font-bold text-foreground mb-2 text-center">Simpan Riwayat RPP Selamanya</h3>
-                        <p className="text-muted-foreground text-center max-w-sm mb-8 leading-relaxed">
-                            Fitur riwayat RPP hanya tersedia untuk paket <strong>Standar, Pro, dan Premium</strong>. Upgrade sekarang untuk menyimpan dan mengakses RPP Anda kapan saja!
-                        </p>
-                        <Link href="/harga">
-                            <Button variant="hero" size="lg" className="rounded-2xl px-12 shadow-glow-primary">
-                                Upgrade Sekarang
-                            </Button>
-                        </Link>
+
+                        <Card className="relative z-10 max-w-2xl mx-auto overflow-hidden border-none shadow-premium bg-white/70 backdrop-blur-xl rounded-[40px]">
+                            <CardContent className="p-8 md:p-12">
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="relative mb-8">
+                                        <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center rotate-12 transition-transform hover:rotate-0 duration-500">
+                                            <Lock className="w-12 h-12 text-primary -rotate-12 transition-transform group-hover:rotate-0" />
+                                        </div>
+                                        <div className="absolute -top-2 -right-2 w-10 h-10 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-lg animate-bounce">
+                                            <Sparkles className="w-5 h-5 text-white" />
+                                        </div>
+                                    </div>
+
+                                    <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4 tracking-tight">
+                                        Halaman <span className="text-gradient-primary">Riwayat</span> Terkunci
+                                    </h2>
+                                    <p className="text-muted-foreground text-lg mb-10 max-w-md leading-relaxed">
+                                        Simpan, akses, dan kelola semua modul ajar (RPP) yang telah Anda buat tanpa batas waktu.
+                                    </p>
+
+                                    {/* Benefit List */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mb-12 text-left">
+                                        {[
+                                            "Simpan Riwayat Selamanya",
+                                            "Akses RPP Kapan Saja",
+                                            "Download Ulang Tanpa Batas",
+                                            "Bebas Watermark & Iklan"
+                                        ].map((benefit, i) => (
+                                            <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-primary/5 border border-primary/10">
+                                                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0">
+                                                    <CheckCircle2 className="w-4 h-4 text-white" />
+                                                </div>
+                                                <span className="text-sm font-semibold text-foreground">{benefit}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                                        <Button variant="hero" size="lg" className="rounded-2xl px-12 group shadow-glow-primary" asChild>
+                                            <Link href="/harga">
+                                                Buka Akses Sekarang
+                                                <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                    <p className="mt-6 text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                                        Tersedia di Paket Standar, Pro & Premium
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 ) : filteredHistory.length > 0 ? (
                     <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>

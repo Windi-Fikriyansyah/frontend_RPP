@@ -44,7 +44,7 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-2xl font-semibold mb-4">5. Hubungi Kami</h2>
                         <p className="text-muted-foreground leading-relaxed">
-                            Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami melalui email di halo@rppgenius.id.
+                            Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami melalui whatsapp di 089622981080.
                         </p>
                     </section>
                 </div>
