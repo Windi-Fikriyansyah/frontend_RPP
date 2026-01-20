@@ -861,9 +861,79 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                 ) : result ? (
-                                    <div id="rpp-preview-content" className="p-10 h-auto min-h-[500px] lg:h-[800px] overflow-auto bg-white border shadow-sm print:h-auto print:overflow-visible print:p-0 print:border-none print:shadow-none mx-auto w-full max-w-[800px]">
+                                    <div id="rpp-preview-content" className="p-4 sm:p-10 h-auto min-h-[500px] lg:h-[800px] overflow-auto bg-white border border-gray-200 shadow-xl print:h-auto print:overflow-visible print:p-0 print:border-none print:shadow-none mx-auto w-full max-w-[850px] transition-all">
                                         {/* DOCUMENT PAPER EFFECT */}
-                                        <div className="prose prose-sm md:prose-base max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-800 prose-strong:text-slate-950 prose-ul:list-disc prose-ol:list-decimal prose-table:border-collapse prose-table:border prose-table:border-slate-300 prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:p-3 prose-td:border prose-td:border-slate-300 prose-td:p-3 prose-pre:bg-slate-50 prose-pre:text-slate-900 prose-pre:border prose-pre:border-slate-200 prose-pre:p-4 prose-hr:border-slate-300">
+                                        <style dangerouslySetInnerHTML={{
+                                            __html: `
+                                            .rpp-prose {
+                                                font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+                                                color: #1a202c;
+                                                line-height: 1.6;
+                                            }
+                                            .rpp-prose h1 {
+                                                text-align: center;
+                                                text-transform: uppercase;
+                                                font-size: 1.5rem;
+                                                margin-bottom: 2rem;
+                                                border-bottom: 2px solid #e2e8f0;
+                                                padding-bottom: 1rem;
+                                            }
+                                            .rpp-prose h2 {
+                                                font-size: 1.25rem;
+                                                margin-top: 2rem;
+                                                margin-bottom: 1rem;
+                                                color: #2d3748;
+                                                border-bottom: 1px solid #edf2f7;
+                                                padding-bottom: 0.5rem;
+                                            }
+                                            .rpp-prose h3 {
+                                                font-size: 1.1rem;
+                                                margin-top: 1.5rem;
+                                                margin-bottom: 0.75rem;
+                                            }
+                                            .rpp-prose table {
+                                                width: 100%;
+                                                border-collapse: collapse;
+                                                margin: 1.5rem 0;
+                                            }
+                                            .rpp-prose table td, .rpp-prose table th {
+                                                border: 1px solid #e2e8f0;
+                                                padding: 8px 12px;
+                                                font-size: 0.9rem;
+                                            }
+                                            .rpp-prose table th {
+                                                background-color: #f8fafc;
+                                                text-align: left;
+                                            }
+
+                                            /* Hierarchy Styling */
+                                            /* I, II, III (for h2) */
+                                            .rpp-prose h2 { counter-reset: sub-section; }
+                                            
+                                            /* Alpha (for level 1 lists inside component / h3) */
+                                            .rpp-prose > div > ol { list-style-type: upper-roman; padding-left: 2rem; }
+                                            .rpp-prose > div > ol > li { margin-bottom: 1rem; font-weight: bold; }
+                                            .rpp-prose > div > ol > li > * { font-weight: normal; }
+
+                                            /* Nested Lists hierarchy */
+                                            /* Level 1: Roman handled by defaults or h2 */
+                                            /* Level 2: Alpha */
+                                            .rpp-prose ol { list-style-type: decimal; }
+                                            .rpp-prose li > ol { list-style-type: upper-alpha !important; }
+                                            .rpp-prose li > ol > li > ol { list-style-type: decimal !important; }
+                                            .rpp-prose li > ol > li > ol > li > ul { list-style-type: disc !important; }
+                                            
+                                            /* If using headings for Roman/Alpha */
+                                            .rpp-prose h2 { /* I. */ }
+                                            .rpp-prose h3 { /* A. */ }
+
+                                            @media print {
+                                                @page { margin: 2cm; }
+                                                body { background: white; }
+                                                .rpp-prose { font-size: 11pt; }
+                                            }
+                                        ` }} />
+                                        <div className="rpp-prose prose prose-sm md:prose-base max-w-none prose-headings:font-bold prose-p:text-slate-800 prose-strong:text-slate-950 prose-table:border-collapse prose-hr:border-slate-300">
                                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{result}</ReactMarkdown>
                                         </div>
                                     </div>
