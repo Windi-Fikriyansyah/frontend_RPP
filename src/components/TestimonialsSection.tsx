@@ -4,7 +4,7 @@ const testimonials = [
     {
         name: "Ibu Sari Dewi",
         role: "Guru SD, Jakarta",
-        content: "RPPGenius benar-benar membantu saya menghemat waktu. Dulu buat satu RPP bisa 2 jam, sekarang cuma 10 menit!",
+        content: "RPPGenius benar-benar membantu saya menghemat waktu. Dulu buat satu RPP bisa 2 jam, sekarang cuma 1 menit!",
         rating: 5
     },
     {
@@ -16,13 +16,13 @@ const testimonials = [
     {
         name: "Ibu Maria Kristina",
         role: "Guru SMA, Surabaya",
-        content: "Kolaborasi dengan rekan guru jadi lebih mudah. Kami bisa berbagi template dan saling review RPP.",
+        content: "Fitur Riwayat RPP dan Riwayat Soal sangat membantu. Saya bisa melihat kembali RPP dan soal yang pernah dibuat, mendownload nya kapan saja, dan tidak perlu mengulang dari awal.",
         rating: 5
     },
     {
         name: "Bapak Hendro",
         role: "Kepala Sekolah SMK, Yogyakarta",
-        content: "Paket sekolah sangat worth it. Semua guru di sekolah kami sekarang pakai RPPGenius.",
+        content: "Paket premium sangat worth it. Semua guru di sekolah kami sekarang pakai RPPGenius.",
         rating: 5
     }
 ];

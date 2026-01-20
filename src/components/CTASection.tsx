@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 const CTASection = () => {
     return (
@@ -32,20 +33,22 @@ const CTASection = () => {
 
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Button
+                        <Button asChild
                             size="xl"
                             className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-strong hover:scale-[1.02] transition-all"
                         >
-                            Mulai Buat RPP Gratis
-                            <ArrowRight className="w-5 h-5" />
+                            <Link href="/login">
+                                Mulai Buat RPP Gratis
+                                <ArrowRight className="w-5 h-5" />
+                            </Link>
                         </Button>
-                        <Button
+                        {/* <Button
                             variant="ghost"
                             size="xl"
                             className="text-primary-foreground border-2 border-primary-foreground/30 hover:bg-primary-foreground/10"
                         >
                             Jadwalkan Demo
-                        </Button>
+                        </Button> */}
                     </div>
 
                     {/* Trust indicators */}
